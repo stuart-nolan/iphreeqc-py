@@ -1,5 +1,5 @@
 """
-iphreeqc.py a python 3+ ctypes wrapper for selected function prototypes 
+A python 3+ ctypes wrapper for selected function prototypes 
 defined by IPhreeqc version 3 in IPhreeqc.h and Var.h
 
 Install & Usage: see https://github.com/stuart-nolan/iphreeqc-py 
@@ -8,6 +8,11 @@ Documentation: see IPhreeqc.h and Var.h
 
 References & Attribution
     <https://www.usgs.gov/software/phreeqc-version-3>
+    Note the examples directory files and content used from them elsewhere
+    in iphreeqc-py are copied from
+    <http://water.usgs.gov/water-resources/software/PHREEQC/phreeqc-3.6.2-15100.tar.gz>
+    and are distributed under the terms of the PHREEQC Public Domain
+    declaration (see the "phreeqc-version-3" link above).
 
     <https://www.phreeqpy.com/>
     PhreeqPy, Python Tools for PHREEQC
@@ -36,25 +41,16 @@ License Notice
 
 License Usage Reference 
     <https://www.gnu.org/licenses/gpl-howto.html>
-
-Notes
-    #import tabulate
-    #selOutput = ipcl.GetSelectedOutputArray()
-    #header = selOutput[0]
-    #print(tabulate(selOutput[1:],headers=header))
-    runFile = os.path.join(install_prefix, 'src', 'python', 'example1.txt')
-    #ipcl.RunFile(runFile)
 """
 import ctypes
 import os
-__version__ = "0.1a1"
-__revision_date__ = "2020.02.18"
+__version__ = "0.1a2"
 
 class iphreeqc():
     def __init__(self, iPhreeqcLib):
         self.iPhreeqcLib=iPhreeqcLib
         ipcl = ctypes.cdll.LoadLibrary(self.iPhreeqcLib)
-        
+
         methods = [('_AccumulateLine', ipcl.AccumulateLine,
                     [ctypes.c_int, ctypes.c_char_p], ctypes.c_int),
                    ('_AddError', ipcl.AddError,
@@ -76,15 +72,15 @@ class iphreeqc():
                     [ctypes.c_int], ctypes.c_int),
                    ('_GetDumpFileName', ipcl.GetDumpFileName,
                     [ctypes.c_int],  ctypes.c_char_p),
-                   ('_GetDumpFileOn', ipcl.GetLogFileOn, [ctypes.c_int],
+                   ('_GetDumpFileOn', ipcl.GetDumpFileOn, [ctypes.c_int],
                     ctypes.c_int),
                    ('_GetDumpString', ipcl.GetDumpString, [ctypes.c_int],
                     ctypes.c_char_p),
                    ('_GetDumpStringLine', ipcl.GetDumpStringLine,
                     [ctypes.c_int, ctypes.c_int], ctypes.c_char_p),
-                   ('_GetDumpStringLineCount', ipcl.GetErrorStringLineCount,
+                   ('_GetDumpStringLineCount', ipcl.GetDumpStringLineCount,
                     [ctypes.c_int], ctypes.c_int),
-                   ('_GetDumpStringOn', ipcl.GetErrorFileOn, [ctypes.c_int],
+                   ('_GetDumpStringOn', ipcl.GetDumpStringOn, [ctypes.c_int],
                     ctypes.c_int),
                    ('_GetErrorFileName', ipcl.GetErrorFileName,
                     [ctypes.c_int],  ctypes.c_char_p),
@@ -112,6 +108,10 @@ class iphreeqc():
                     ctypes.c_int),
                    ('_GetOutputString', ipcl.GetOutputString,
                     [ctypes.c_int],  ctypes.c_char_p),
+                   ('_GetOutputFileName', ipcl.GetOutputFileName,
+                    [ctypes.c_int],  ctypes.c_char_p),
+                   ('_GetOutputFileOn', ipcl.GetOutputFileOn, [ctypes.c_int],
+                    ctypes.c_int),
                    ('_GetOutputStringLine', ipcl.GetOutputStringLine,
                     [ctypes.c_int, ctypes.c_int], ctypes.c_char_p),
                    ('_GetOutputStringLineCount', ipcl.GetOutputStringLineCount,
@@ -121,8 +121,28 @@ class iphreeqc():
                    ('_GetSelectedOutputColumnCount',
                     ipcl.GetSelectedOutputColumnCount, [ctypes.c_int],
                     ctypes.c_int),
+                   ('_GetSelectedOutputCount',
+                    ipcl.GetSelectedOutputCount, [ctypes.c_int],
+                    ctypes.c_int),
+                   ('_GetSelectedOutputFileName',
+                    ipcl.GetSelectedOutputFileName,
+                    [ctypes.c_int],  ctypes.c_char_p),
+                   ('_GetSelectedOutputFileOn',
+                    ipcl.GetSelectedOutputFileOn, [ctypes.c_int],
+                    ctypes.c_int),
                    ('_GetSelectedOutputRowCount',
                     ipcl.GetSelectedOutputRowCount, [ctypes.c_int],
+                    ctypes.c_int),
+                   ('_GetSelectedOutputString', ipcl.GetSelectedOutputString,
+                    [ctypes.c_int],  ctypes.c_char_p),
+                   ('_GetSelectedOutputStringLine',
+                    ipcl.GetSelectedOutputStringLine,
+                    [ctypes.c_int, ctypes.c_int], ctypes.c_char_p),
+                   ('_GetSelectedOutputStringLineCount',
+                    ipcl.GetSelectedOutputStringLineCount, [ctypes.c_int],
+                    ctypes.c_int),
+                   ('_GetSelectedOutputStringOn',
+                    ipcl.GetSelectedOutputStringOn, [ctypes.c_int],
                     ctypes.c_int),
                    ('_GetSelectedOutputValue', ipcl.GetSelectedOutputValue,
                     [ctypes.c_int, ctypes.c_int, ctypes.c_int,
@@ -141,18 +161,21 @@ class iphreeqc():
                     [ctypes.c_int, ctypes.c_char_p], ctypes.c_int),
                    ('_RunString', ipcl.RunString,
                     [ctypes.c_int, ctypes.c_char_p], ctypes.c_int),
+                   ('_SetCurrentSelectedOutputUserNumber',
+                    ipcl.SetCurrentSelectedOutputUserNumber,
+                    [ctypes.c_int, ctypes.c_int], ctypes.c_int),
                    ('_SetDumpFileName', ipcl.SetDumpFileName,
                     [ctypes.c_int, ctypes.c_char_p], ctypes.c_int),
                    ('_SetDumpFileOn', ipcl.SetDumpFileOn,
-                    [ctypes.c_int,ctypes.c_int], ctypes.c_int),
+                    [ctypes.c_int, ctypes.c_int], ctypes.c_int),
                    ('_SetDumpStringOn', ipcl.SetDumpStringOn,
-                    [ctypes.c_int,ctypes.c_int], ctypes.c_int),
+                    [ctypes.c_int, ctypes.c_int], ctypes.c_int),
                    ('_SetErrorFileName', ipcl.SetErrorFileName,
                     [ctypes.c_int, ctypes.c_char_p], ctypes.c_int),
                    ('_SetErrorFileOn', ipcl.SetErrorStringOn,
-                    [ctypes.c_int,ctypes.c_int], ctypes.c_int),
+                    [ctypes.c_int, ctypes.c_int], ctypes.c_int),
                    ('_SetErrorStringOn', ipcl.SetErrorStringOn,
-                    [ctypes.c_int,ctypes.c_int], ctypes.c_int),
+                    [ctypes.c_int, ctypes.c_int], ctypes.c_int),
                    ('_SetLogFileName', ipcl.SetLogFileName,
                     [ctypes.c_int, ctypes.c_char_p], ctypes.c_int),
                    ('_SetLogFileOn', ipcl.SetLogFileOn,
@@ -184,7 +207,14 @@ class iphreeqc():
         self.phc_warning_count = 0
         self.phc_database_error_count = 0
         self.id = self.CreateIPhreeqc()
+        self.iPhreeqcLib_version = self.GetVersionString()
         self.database = ""
+        self.runFileName=""
+        self.errorFileName=self.GetErrorFileName()
+        self.logFileName=self.GetLogFileName()
+        self.dumpFileName=self.GetDumpFileName()
+        self.outputFileName=self.GetOutputFileName()
+        self.selectedOutputFileName=self.GetSelectedOutputFileName()
 
     @staticmethod
     def _RaisePhreeqcError(error_code):
@@ -386,6 +416,12 @@ class iphreeqc():
     def GetOutputString(self):
         return self._GetOutputString(self.id).decode('utf-8',errors='ignore')
  
+    def GetOutputFileName(self):
+        return self._GetOutputFileName(self.id).decode('utf-8')
+ 
+    def GetOutputFileOn(self):
+        return self._GetOutputFileOn(self.id)
+ 
     def GetOutputStringLine(self, lidx):
         """
         Parameters:
@@ -442,6 +478,15 @@ class iphreeqc():
     def GetSelectedOutputColumnCount(self):
         return self._GetSelectedOutputColumnCount(self.id)
 
+    def GetSelectedOutputCount(self):
+        return self._GetSelectedOutputCount(self.id)
+
+    def GetSelectedOutputFileName(self):
+        return self._GetSelectedOutputFileName(self.id).decode('utf-8')
+ 
+    def GetSelectedOutputFileOn(self):
+        return self._GetSelectedOutputFileOn(self.id)
+ 
     def GetSelectedOutputRow(self, ridx):
         """
         Return one row (all columns) from selected output at row index ridx
@@ -463,6 +508,31 @@ class iphreeqc():
     def GetSelectedOutputRowCount(self):
         return self._GetSelectedOutputRowCount(self.id)
 
+    def GetSelectedOutputString(self):
+        return self._GetSelectedOutputString(self.id).decode('utf-8',
+                                                             errors='ignore')
+ 
+    def GetSelectedOutputStringLine(self, lidx):
+        """
+        Parameters:
+            lidx, integer line index (can be negative to index back from the 
+                  end of string)
+        
+        Returns:
+            one line from output string at line lidx        
+        """
+        if lidx < 0:
+            lidx = self.GetSelectedOutputStringLineCount() + lidx
+        return self._GetSelectedOutputStringLine(self.id,
+                                                 lidx).decode('utf-8',
+                                                              errors='ignore')
+ 
+    def GetSelectedOutputStringLineCount(self):
+        return self._GetSelectedOutputStringLineCount(self.id)
+ 
+    def GetSelectedOutputStringOn(self):
+        return self._GetSelectedOutputStringOn(self.id)
+ 
     def GetSelectedOutputValue(self, ridx, cidx):
         """
         Parameters:
@@ -472,10 +542,11 @@ class iphreeqc():
         Returns:
             val, one selected output value at ridx and cidx
         """
-        error_code = self._GetSelectedOutputValue(self.id, ridx, cidx, self.var)
+        error_code = self._GetSelectedOutputValue(self.id, ridx, cidx,
+                                                  self.var)
         if error_code != 0:
             self._RaisePhreeqcError(error_code)
-        if self.var.type_ == 3:
+        if self.var.type == 3:
             val = self.var.value.double_value
         elif self.var.type == 2:
             val = self.var.value.long_value
@@ -527,6 +598,7 @@ class iphreeqc():
             runFQPN, fully qualified path name string to a "run" file 
             containing valid phreeqc instructions
         """
+        self.runFileName=runFQPN
         errors = self._RunFile(self.id, bytes(runFQPN, 'utf-8'))
         if errors != 0:
             self._RaiseStringError(errors)
@@ -541,12 +613,22 @@ class iphreeqc():
         if errors != 0:
             self._RaiseStringError(errors)
     
-    def SetDumpFileName(self,dmpFQPN):
+    def SetCurrentSelectedOutputUserNumber(self, unum):
+        """
+        Parameters:
+            unum, integer user number
+        """
+        errors = self._SetCurrentSelectedOutputUserNumber(self.id, unum)
+        if errors != 0:
+            self._RaiseStringError(errors)
+ 
+    def SetDumpFileName(self,dumpFQPN):
         """
         Parameters:
             dmpFQPN, fully qualified path name string to a dump file
         """
-        errors = self._SetDumpFileName(self.id,  bytes(dmpFQPN, 'utf-8'))
+        self.dumpFile = dumpFileFQPN
+        errors = self._SetDumpFileName(self.id,  bytes(dumpFQPN, 'utf-8'))
         if errors != 0:
             self._RaiseStringError(errors)
             
@@ -568,12 +650,13 @@ class iphreeqc():
         if errors != 0:
             self._RaiseStringError(errors)
 
-    def SetErrorFileName(self,errFQPN):
+    def SetErrorFileName(self,errorFQPN):
         """
         Parameters:
             errFQPN, fully qualified path name string to an error file
         """
-        errors = self._SetErrorFileName(self.id,  bytes(errFQPN, 'utf-8'))
+        self.errorFileName=errorFQPN
+        errors = self._SetErrorFileName(self.id,  bytes(errorFQPN, 'utf-8'))
         if errors != 0:
             self._RaiseStringError(errors)
             
@@ -600,6 +683,7 @@ class iphreeqc():
         Parameters:
             logFQPN, fully qualified path name string to a log file
         """
+        self.logFileName=logFQPN
         errors = self._SetLogFileName(self.id,  bytes(logFQPN, 'utf-8'))
         if errors != 0:
             self._RaiseStringError(errors)
@@ -622,6 +706,17 @@ class iphreeqc():
         if errors != 0:
             self._RaiseStringError(errors)
 
+    def SetOutputFileName(self,outputFQPN):
+        """
+        Parameters:
+            outputFQPN, fully qualified path name string to an output file
+        """
+        self.outputFileName = outputFQPN
+        errors = self._SetOutputFileName(self.id,
+                                         bytes(outputFQPN, 'utf-8'))
+        if errors != 0:
+            self._RaiseStringError(errors)
+            
     def SetOutputFileOn(self,val=1):
         """
         Parameters:
@@ -640,13 +735,16 @@ class iphreeqc():
         if errors != 0:
             self._RaiseStringError(errors)
 
-    def SetSelectedOutputFileName(self,soutFQPN):
+    def SetSelectedOutputFileName(self,selectedOutputFQPN):
         """
         Parameters:
-            soutFQPN, fully qualified path name string to a selected output file
+            selectedOutFQPN, fully qualified path name string to a selected 
+            output file
         """
+        self.selectedOutputFileName = selectedOutputFQPN
         errors = self._SetSelectedOutputFileName(self.id,
-                                                 bytes(soutFQPN, 'utf-8'))
+                                                 bytes(selectedOutputFQPN,
+                                                       'utf-8'))
         if errors != 0:
             self._RaiseStringError(errors)
             
@@ -697,100 +795,131 @@ class PhreeqcException(Exception):
     """
     pass
 
-def example1(lib="libiphreeqc.so", database="phreeqc.dat"):
+def ex1_mod(lib="libiphreeqc.so", database="phreeqc.dat"):
+    """
+    Usage example for iphreeqc.py.  
+
+    Demonstrates:
+        * instantiating the iphreeqc class
+            - initialize iPhreeqcLib
+            - CreateIPhreeqc()
+            - GetErrorFileName(), intialize errorFileName
+            - GetLogFileName(), initialize logFileName
+            - GetDumpFileName(), initialize dumpFileName
+            - GetOutputFileName(), initialize outputFileName
+            - GetSelectedOutputFileName(), initalize selectedOutputFileName
+            - GetVersionString(), initialize iPhreeqcLib_version
+        * AccumulateLine(<string>)
+        * LoadDatabase(<database_FQPN>) i.e. loading an IPhreeqc database
+        * GetDumpString()
+        * GetDumpStringOn()
+        * GetErrorString()
+        * GetErrorStringOn()
+        * GetLogString()
+        * GetLogStringOn()
+        * GetOutputString()
+        * GetOutputStringOn()
+        * RunAccumulated()
+        * SetDumpStringOn([val=0|1])
+        * SetErrorStringOn([val=0|1])
+        * SetLogStringOn([val=0|1])
+        * SetOutputStringOn([val=0|1])
+    
+    Parameters:
+        lib, FQPN to the iphreeqc shared library.
+        database, FQPN to the iphreeqc database "phreeqc.dat"
+
+    Notes:
+        The input string argument to AccumulateLine is derived from the ex1 
+        file found in the examples directory.
+    """
     if os.path.isfile(lib):
         ipcl=iphreeqc(lib)
     else:
         print("IPhreeqc library not found: %s" % lib)
-        quit()
+        return
 
     if os.path.isfile(database):
         ipcl.LoadDatabase(database)
     else:
         print("database phreeqc.dat not found: %s" % database)
-        quit()
+        return
 
-    print("Using iphreeqc library: %s" % ipcl.iPhreeqcLib)
-    print("Using iphreeqc version: %s" % ipcl.GetVersionString())
-    print("Using database: %s" % ipcl.database)
-    
-    ipcl.SetDumpStringOn()
-    ipcl.SetErrorStringOn()
-    ipcl.SetLogStringOn()
-    ipcl.SetOutputStringOn()
+    print("IPhreeqc shared library: %s" % ipcl.iPhreeqcLib)
+    print("IPhreeqc version: %s" % ipcl.iPhreeqcLib_version)
+    print("iphreeqc-py version: %s" % __version__)
     
     ipcl.AccumulateLine(
     """
-    TITLE Example 1. Add uranium and speciate seawater.
-    SOLUTION 1 SEAWATER FROM NORDSTROM AND OTHERS (1979)
-      units ppm
-      pH 8.22
-      pe 8.451
-      density 1.023
-      temp 25.0
-      redox O(0)/O(-2)
-      Ca 412.3
-      Mg 1291.8
-      Na 10768.0
-      K 399.1
-      Fe 0.002
-      Mn 0.0002 pe
-      Si 4.28
-      Cl 19353.0
-      Alkalinity 141.682 as HCO3
-      S(6) 2712.0
-      N(5) 0.29 gfw 62.0
-      N(-3) 0.03 as NH4
-      U 3.3 ppb N(5)/N(-3)
-      O(0) 1.0 O2(g) -0.7
+    TITLE Example 1.--Add uranium and speciate seawater.
+    SOLUTION 1  SEAWATER FROM NORDSTROM AND OTHERS (1979)
+        units   ppm
+        pH      8.22
+        pe      8.451
+        density 1.023
+        temp    25.0
+        redox   O(0)/O(-2)
+        Ca              412.3
+        Mg              1291.8
+        Na              10768.0
+        K               399.1
+        Fe              0.002
+        Mn              0.0002  pe
+        Si              4.28
+        Cl              19353.0
+        Alkalinity      141.682 as HCO3
+        S(6)            2712.0
+        N(5)            0.29    gfw   62.0
+        N(-3)           0.03    as    NH4
+        U               3.3     ppb   N(5)/N(-3)
+        O(0)            1.0     O2(g) -0.7
     SOLUTION_MASTER_SPECIES
-      U U+4 0.0 238.0290 238.0290
-      U(4) U+4 0.0 238.0290 
-      U(5) UO2+ 0.0 238.0290
-      U(6) UO2+2 0.0 238.0290
+        U       U+4     0.0     238.0290     238.0290
+        U(4)    U+4     0.0     238.0290
+        U(5)    UO2+    0.0     238.0290
+        U(6)    UO2+2   0.0     238.0290
     SOLUTION_SPECIES
-      # primary master species for U
-      # is also secondary master species for U(4)
-      U+4 = U+4
-      log_k 0.0
-    SOLUTION_SPECIES
-      U+4 + 4 H2O = U(OH)4 + 4 H+
-        log_k -8.538
-        delta_h 24.760 kcal
-      U+4 + 5 H2O = U(OH)5- + 5 H+
-        log_k -13.147
-        delta_h 27.580 kcal
-      # secondary master species for U(5)
-      U+4 + 2 H2O = UO2+ + 4 H+ + e-
-        log_k -6.432
-        delta_h 31.130 kcal
-      # secondary master species for U(6)
-      U+4 + 2 H2O = UO2+2 + 4 H+ + 2 e-
-        log_k -9.217
-        delta_h 34.430 kcal
-      UO2+2 + H2O = UO2OH+ + H+
-        log_k -5.782 
-        delta_h 11.015 kcal
-      2UO2+2 + 2H2O = (UO2)2(OH)2+2 + 2H+
-        log_k -5.626
-        delta_h -36.04 kcal
-      3UO2+2 + 5H2O = (UO2)3(OH)5+ + 5H+
-        log_k -15.641
-        delta_h -44.27 kcal
-      UO2+2 + CO3-2 = UO2CO3
-        log_k 10.064
-        delta_h 0.84 kcal
-      UO2+2 + 2CO3-2 = UO2(CO3)2-2
-        log_k 16.977
-        delta_h 3.48 kcal
-      UO2+2 + 3CO3-2 = UO2(CO3)3-4
-        log_k 21.397
-        delta_h -8.78 kcal
+        #primary master species for U
+        #is also secondary master species for U(4)
+        U+4 = U+4
+                log_k          0.0
+        U+4 + 4 H2O = U(OH)4 + 4 H+
+                log_k          -8.538
+                delta_h        24.760 kcal
+        U+4 + 5 H2O = U(OH)5- + 5 H+
+                log_k          -13.147
+                delta_h        27.580 kcal
+        #secondary master species for U(5)
+        U+4 + 2 H2O = UO2+ + 4 H+ + e-
+                log_k          -6.432
+                delta_h        31.130 kcal
+        #secondary master species for U(6)
+        U+4 + 2 H2O = UO2+2 + 4 H+ + 2 e-
+                log_k          -9.217
+                delta_h        34.430 kcal
+        UO2+2 + H2O = UO2OH+ + H+
+                log_k          -5.782
+                delta_h        11.015 kcal
+        2UO2+2 + 2H2O = (UO2)2(OH)2+2 + 2H+
+                log_k          -5.626
+                delta_h        -36.04 kcal
+        3UO2+2 + 5H2O = (UO2)3(OH)5+ + 5H+
+                log_k          -15.641
+                delta_h        -44.27 kcal
+        UO2+2 + CO3-2 = UO2CO3
+                log_k          10.064
+                delta_h        0.84 kcal
+        UO2+2 + 2CO3-2 = UO2(CO3)2-2
+                log_k          16.977
+                delta_h        3.48 kcal
+        UO2+2 + 3CO3-2 = UO2(CO3)3-4
+                log_k          21.397
+                delta_h        -8.78 kcal
     PHASES
-      Uraninite
+        Uraninite
         UO2 + 4 H+ = U+4 + 2 H2O
-          log_k -3.490
-          delta_h -18.630 kcal
+        log_k          -3.490
+        delta_h        -18.630 kcal
     DUMP
       -all
     KNOBS
@@ -798,16 +927,17 @@ def example1(lib="libiphreeqc.so", database="phreeqc.dat"):
     END
     """)
 
+    ipcl.SetErrorStringOn()
+    print("ErrorStringOn (enabled = 1): %s" % ipcl.GetErrorStringOn())
+    ipcl.SetLogStringOn()
+    print("LogStringOn (enabled = 1): %s" % ipcl.GetLogStringOn())
+    ipcl.SetDumpStringOn()
+    print("DumpStringOn (enabled = 1): %s" % ipcl.GetDumpStringOn())
+    ipcl.SetOutputStringOn()
+    print("OutputStringOn (enabled = 1): %s" % ipcl.GetOutputStringOn())
+    
     ipcl.RunAccumulated()
     
-    print("\n\n*** Output String ***")
-    outStr = ipcl.GetOutputString()
-    print(outStr)
-
-    print("\n\n*** Dump String ***")
-    dmpStr = ipcl.GetDumpString()
-    print(dmpStr) 
-
     print("\n\n*** Error String ***")
     errStr = ipcl.GetErrorString()
     print(errStr) 
@@ -815,6 +945,14 @@ def example1(lib="libiphreeqc.so", database="phreeqc.dat"):
     print("\n\n*** Log String ***\n\n")
     logStr = ipcl.GetLogString()
     print(logStr)
+
+    print("\n\n*** Dump String ***")
+    dmpStr = ipcl.GetDumpString()
+    print(dmpStr) 
+
+    print("\n\n*** Output String ***")
+    outStr = ipcl.GetOutputString()
+    print(outStr)
     
 if __name__ == '__main__':
     #
@@ -835,4 +973,4 @@ if __name__ == '__main__':
                           'database',
                           'phreeqc.dat')
 
-    example1(lib,database)
+    ex1_mod(lib,database)

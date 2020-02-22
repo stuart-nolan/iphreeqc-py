@@ -1,3 +1,4 @@
+graft iphreeqc-data
 include COPYING
 include COPYING.LESSER
 include README.md
