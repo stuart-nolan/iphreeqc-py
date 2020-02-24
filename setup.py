@@ -18,7 +18,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     name="iphreeqc-py", 
     packages=setuptools.find_packages(),
-    py_modules = ['iphreeqc', 'test_iphreeqc'],
+    py_modules = ['iphreeqc'],
     url="https://github.com/stuart-nolan/iphreeqc-py.git",
     version=iphreeqc.__version__,
     zip_safe = False

@@ -2,7 +2,7 @@
 A python 3+ ctypes wrapper for selected function prototypes defined by
 IPhreeqc version 3 in IPhreeqc.h and Var.h.
 
-Version 0.1a2 is an "alpha" pre-release.
+Version 0.1a3 is an "alpha" pre-release.
 
 See "Change Log" below for recent changes.
 
@@ -52,7 +52,7 @@ Assuming iphreeqc-py is installed and an IPhreeqc shared library has been
 configured, built, and installed as described above, try:
 
     python -c "import iphreeqc; print(iphreeqc.ex1_mod(lib=\"${HOME}/local/lib/iphreeqc-3.6.2-15100/libiphreeqc.so\", database=\"${HOME}/local/share/doc/iphreeqc-3.6.2-15100/database/phreeqc.dat\"))"
-    python -c "import test_iphreeqc; print(test_iphreeqc.ex2(lib=\"${HOME}/local/lib/iphreeqc-3.6.2-15100/libiphreeqc.so\", database=\"${HOME}/local/share/doc/iphreeqc-3.6.2-15100/database/phreeqc.dat\"))"
+    python -c "from test_iphreeqc.test_ex2 import ex2; print(ex2(lib=\"${HOME}/local/lib/iphreeqc-3.6.2-15100/libiphreeqc.so\", database=\"${HOME}/local/share/doc/iphreeqc-3.6.2-15100/database/phreeqc.dat\"))"
 
 #### Clean up
 
@@ -69,11 +69,13 @@ on Ubuntu 18.04.4 LTS, February 2020.
 
 ## References & Attribution
     <https://www.usgs.gov/software/phreeqc-version-3>
-    Note the examples directory files and content used from them elsewhere
-    in iphreeqc-py are copied from
-    <http://water.usgs.gov/water-resources/software/PHREEQC/phreeqc-3.6.2-15100.tar.gz>
-    and are distributed under the terms of the PHREEQC Public Domain
-    declaration (see the "phreeqc-version-3" link above).
+        Note the files in the examples directory and content used from 
+        these files elsewhere in iphreeqc-py are copied from:
+    
+        <http://water.usgs.gov/water-resources/software/PHREEQC/phreeqc-3.6.2-15100.tar.gz>
+    
+        and are distributed under the terms of the PHREEQC Public Domain
+        declaration (see the "phreeqc-version-3" link above).
 
     <https://www.phreeqpy.com/>
     PhreeqPy, Python Tools for PHREEQC
@@ -89,8 +91,8 @@ This work is derived from IPhreeqcPy.
     iphreeqc-py Copyright (C) 2020 Stuart Nolan
 
     This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published 
-    by the Free Software Foundation, version 3.
+    it under the terms of the GNU Lesser General Public License as
+    published by the Free Software Foundation, version 3.
 
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -104,20 +106,17 @@ This work is derived from IPhreeqcPy.
     <https://www.gnu.org/licenses/gpl-howto.html>
 
 ## Change Log
-Notable changes from 0.1a1:
-  - bug fixes, code clean up, and additional iphreeqc functions implemented 
-    in iphreeqc.py
-  - iphreeqc.py "example1" changed to "ex1_mod" and updated 
-  - examples from phreeqc-3.6.2-15100 are included for evaluation with
-    iphreeqc.py
-  - test_iphreeqc.py created for running (potentially modified) phreeqc
-    examples, testing and demonstrating iphreeqc.py functionality
-  - implemented ex2 demo in test_iphreeqc.py
-  - implemented release tags for iphreeqc-py github site
-  - amended git commit 4768dc1 commit message for Author:, Signed-off-by:,
-    and added release tag v0.1a1.
+iphreeqc-py is a work in progress and not fully tested
+
+Notable changes from 0.1a2:
+  - rename iphreeqc-data (package) directory to test_iphreeqc (package)
+  - delete \*Make\* phreeqc build files from examples directory
+  - rename test_iphreeqc.py to test_ex2.py and move to test_iphreeqc
+  - create test_ex3.py
+  - add GetNthSelectedOutputUserNumber to iphreeqc.py
+  - experiment with selected_output [<user number>] (see ex3_mod in
+    test_ex3.py)
+  - minor code and documentation updates
 
 See [here](https://github.com/stuart-nolan/iphreeqc-py/commits/master) for
-details.
-
-iphreeqc.py and test_iphreeqc.py have not been fully tested.
+specifics.

@@ -1,3 +1,6 @@
+# developer build notes and bash shell script
+build.sh
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

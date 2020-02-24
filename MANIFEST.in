@@ -1,4 +1,3 @@
-graft iphreeqc-data
+graft test_iphreeqc/examples
 include COPYING
 include COPYING.LESSER
-include README.md

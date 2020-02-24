@@ -8,11 +8,13 @@ Documentation: see IPhreeqc.h and Var.h
 
 References & Attribution
     <https://www.usgs.gov/software/phreeqc-version-3>
-    Note the examples directory files and content used from them elsewhere
-    in iphreeqc-py are copied from
-    <http://water.usgs.gov/water-resources/software/PHREEQC/phreeqc-3.6.2-15100.tar.gz>
-    and are distributed under the terms of the PHREEQC Public Domain
-    declaration (see the "phreeqc-version-3" link above).
+        Note the files in the examples directory and content used from 
+        these files elsewhere in iphreeqc-py are copied from:
+    
+        <http://water.usgs.gov/water-resources/software/PHREEQC/phreeqc-3.6.2-15100.tar.gz>
+    
+        and are distributed under the terms of the PHREEQC Public Domain
+        declaration (see the "phreeqc-version-3" link above).
 
     <https://www.phreeqpy.com/>
     PhreeqPy, Python Tools for PHREEQC
@@ -28,8 +30,8 @@ License Notice
     iphreeqc.py Copyright (C) 2020 Stuart Nolan
 
     This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published 
-    by the Free Software Foundation, version 3.
+    it under the terms of the GNU Lesser General Public License as
+    published by the Free Software Foundation, version 3.
 
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -44,7 +46,7 @@ License Usage Reference
 """
 import ctypes
 import os
-__version__ = "0.1a2"
+__version__ = "0.1a3"
 
 class iphreeqc():
     def __init__(self, iPhreeqcLib):
@@ -106,6 +108,9 @@ class iphreeqc():
                     [ctypes.c_int], ctypes.c_int),
                    ('_GetLogStringOn', ipcl.GetLogStringOn, [ctypes.c_int],
                     ctypes.c_int),
+                   ('_GetNthSelectedOutputUserNumber',
+                    ipcl.GetNthSelectedOutputUserNumber,
+                    [ctypes.c_int, ctypes.c_int], ctypes.c_int),
                    ('_GetOutputString', ipcl.GetOutputString,
                     [ctypes.c_int],  ctypes.c_char_p),
                    ('_GetOutputFileName', ipcl.GetOutputFileName,
@@ -413,6 +418,17 @@ class iphreeqc():
     def GetLogStringOn(self):
         return self._GetLogStringOn(self.id)
  
+    def GetNthSelectedOutputUserNumber(self, idx):
+        """
+        Parameters:
+            idx, integer index
+        """
+        result = self._GetNthSelectedOutputUserNumber(self.id, idx)
+        if result < 0:
+            self._RaiseStringError(result)
+
+        return result
+    
     def GetOutputString(self):
         return self._GetOutputString(self.id).decode('utf-8',errors='ignore')
  
@@ -492,7 +508,7 @@ class iphreeqc():
         Return one row (all columns) from selected output at row index ridx
 
         Parameters:
-            ridx, integer row index (can be negative to index back from the end
+            ridx, integer row index (can be negative to index back from the
                   end)
         
         Returns:
@@ -515,8 +531,8 @@ class iphreeqc():
     def GetSelectedOutputStringLine(self, lidx):
         """
         Parameters:
-            lidx, integer line index (can be negative to index back from the 
-                  end of string)
+            lidx, integer line index (can be negative to index back from 
+                  the end of string)
         
         Returns:
             one line from output string at line lidx        
@@ -826,12 +842,12 @@ def ex1_mod(lib="libiphreeqc.so", database="phreeqc.dat"):
         * SetOutputStringOn([val=0|1])
     
     Parameters:
-        lib, FQPN to the iphreeqc shared library.
+        lib, FQPN to the iphreeqc shared library
         database, FQPN to the iphreeqc database "phreeqc.dat"
 
     Notes:
-        The input string argument to AccumulateLine is derived from the ex1 
-        file found in the examples directory.
+        The input string argument to AccumulateLine is derived from the 
+        ex1 file found in the examples directory
     """
     if os.path.isfile(lib):
         ipcl=iphreeqc(lib)

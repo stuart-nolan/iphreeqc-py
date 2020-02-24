@@ -1,19 +1,19 @@
 """
-iphreeqc-py tests, examples, and demonstrations. 
-
-Selected Phreeqc examples have been adapted for use with iphreeqc-py.
+test_ex2.py, run examples/ex2 with iphreeqc.py
 
 ## USAGE
 Try: 
-    python -c "import test_iphreeqc; print(test_iphreeqc.ex2(lib=\"${HOME}/local/lib/iphreeqc-3.6.2-15100/libiphreeqc.so\", database=\"${HOME}/local/share/doc/iphreeqc-3.6.2-15100/database/phreeqc.dat\"))"
+    python -c "from test_iphreeqc.test_ex2 import ex2; print(ex2(lib=\"${HOME}/local/lib/iphreeqc-3.6.2-15100/libiphreeqc.so\", database=\"${HOME}/local/share/doc/iphreeqc-3.6.2-15100/database/phreeqc.dat\"))"
 
 ## References & Attribution
     <https://www.usgs.gov/software/phreeqc-version-3>
-    Note the examples directory files and content used from them elsewhere
-    in iphreeqc-py are copied from
-    <http://water.usgs.gov/water-resources/software/PHREEQC/phreeqc-3.6.2-15100.tar.gz>
-    and are distributed under the terms of the PHREEQC Public Domain
-    declaration (see the "phreeqc-version-3" link above).
+        Note the files in the examples directory and content used from 
+        these files elsewhere in iphreeqc-py are copied from:
+    
+        <http://water.usgs.gov/water-resources/software/PHREEQC/phreeqc-3.6.2-15100.tar.gz>
+    
+        and are distributed under the terms of the PHREEQC Public Domain
+        declaration (see the "phreeqc-version-3" link above).
 
     <http://raviapatel.bitbucket.io/IPhreeqcPy>
     IPhreeqcPy, a python wrapper for IPhreeqc
@@ -23,11 +23,11 @@ Try:
     iphreeqc-py Copyright (C) 2020 Stuart Nolan
 
 ## License Notice
-    test_iphreeqc.py Copyright (C) 2020 Stuart Nolan
+    test_ex2.py Copyright (C) 2020 Stuart Nolan
 
     This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published 
-    by the Free Software Foundation, version 3.
+    it under the terms of the GNU Lesser General Public License as
+    published by the Free Software Foundation, version 3.
 
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -43,7 +43,7 @@ __version__ = iphreeqc.__version__
 
 def ex2(lib="libiphreeqc.so", database="phreeqc.dat"):
     """
-    run file ex2 from Phreeqc examples and use python to process selected
+    Run file ex2 from Phreeqc examples and use python to process selected
     output results
 
     Demonstrates:
@@ -54,27 +54,27 @@ def ex2(lib="libiphreeqc.so", database="phreeqc.dat"):
             - GetSelectedOutputColumnCount()
             - GetSelectedOutputValue(<ridx>, <cidx>)
 
-    See also "ex1_mod" found in iphreeqc.py. 
+    See also "ex1_mod" found in iphreeqc.py
 
     Parameters:
-        ipcl, an iphreeqc class instance from the iphreeqc.py module
-        db_prefix, path to iphreeqc "phreeqc.dat" database  
+        lib, FQPN to the iphreeqc shared library
+        database, FQPN to the iphreeqc database "phreeqc.dat"  
     
     Notes
-     * Plots are requested by the ex2 input file but are not generated.  
-       There is no indication regarding the (lack of) plots in the error, 
-       log, output, or selected output strings.  Apparently, Phreeqc 
-       plotting will fail silently if requested from iphreeqc.py under Linux. 
+     * Plots requested by the ex2 input file are not generated.  There is
+       no indication regarding the (lack of) plots in the error, log, 
+       output, or selected output strings.  Apparently, Phreeqc plotting 
+       will fail silently if requested from iphreeqc.py under Linux. 
 
-       GetSelectedOutputArray can be used to fetch selected output data  
+       GetSelectedOutputArray can be used to fetch selected output data 
        into a python list as originally demonstrated by Ravi Patel in 
        IPhreeqcPy.
 
        The selected output data can be inspected by using a python package 
-       such as tabulate and the ex2 plots can be recreated by using a python
-       package such as matplotlib.  Note that using python/matplotlib in place 
-       of Phreeqc's plotting functionality requires more user effort in this 
-       case.
+       such as tabulate and the ex2 plots can be recreated by using a 
+       python package such as matplotlib.  Note that using matplotlib in 
+       place of Phreeqc's plotting functionality requires more effort  
+       from the user in this case.
        
      * Error, output, and selected output string functionality is enabled.
 
@@ -109,7 +109,7 @@ def ex2(lib="libiphreeqc.so", database="phreeqc.dat"):
     ipcl.SetSelectedOutputStringOn()
 
     location = os.path.dirname(os.path.realpath(os.path.abspath(__file__)))
-    runFile = os.path.join(location, 'iphreeqc-data', 'examples', 'ex2')
+    runFile = os.path.join(location, 'examples', 'ex2')
     if os.path.isfile(runFile):
         ipcl.RunFile(runFile)
     else:
@@ -169,6 +169,8 @@ def ex2(lib="libiphreeqc.so", database="phreeqc.dat"):
               (ug1_title, ug1_xlabel, ug1_ylabel))
         print("Gypsum si data: %s;\n Anhydrite si data: %s;" %
               (ug1_gypsumSI, ug1_anhydriteSI))
+
+    return ipcl # for use in an interactive python session
         
 if __name__ == '__main__':
     #
@@ -189,4 +191,4 @@ if __name__ == '__main__':
                           'database',
                           'phreeqc.dat')
 
-    ex2(lib, database)
+    ex2_ = ex2(lib, database)
