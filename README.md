@@ -2,7 +2,7 @@
 A python 3+ ctypes wrapper for selected function prototypes defined by
 IPhreeqc version 3 in IPhreeqc.h and Var.h.
 
-Version 0.1a3 is an "alpha" pre-release.
+Version 0.1a4 is an "alpha" pre-release.
 
 See "Change Log" below for recent changes.
 
@@ -106,17 +106,25 @@ This work is derived from IPhreeqcPy.
     <https://www.gnu.org/licenses/gpl-howto.html>
 
 ## Change Log
-iphreeqc-py is a work in progress and not fully tested
+iphreeqc-py is a work in progress and is not fully tested
 
-Notable changes from 0.1a2:
-  - rename iphreeqc-data (package) directory to test_iphreeqc (package)
-  - delete \*Make\* phreeqc build files from examples directory
-  - rename test_iphreeqc.py to test_ex2.py and move to test_iphreeqc
-  - create test_ex3.py
-  - add GetNthSelectedOutputUserNumber to iphreeqc.py
-  - experiment with selected_output [<user number>] (see ex3_mod in
-    test_ex3.py)
-  - minor code and documentation updates
-
+Notable changes from 0.1a3:
+  - escape square brackets ("\[|\]") in README.md for non links
+  - delete ex3_mod\* from test_iphreeqc/examples/
+  - rename PhreeqcException class to IPhreeqcError in iphreeqc.py
+  - remove staticmethod _RaisePhreeqcError from iphreeqc.py
+  - remove instance method _RaiseStringError from iphreeqc.py
+  - implement instance method _RaiseIPhreeqcError in iphreeqc.py
+  - rework error handling for LoadDatabase, RunFile, SetDumpFileName,
+    SetErrorFileName, SetLogFileName, SetOutputFileName,
+    SetSelectedOutputFileName in iphreeqc.py
+  - rework AddError and AddWarning in iphreeqc.py
+  - add GetWarningString, GetWarningStringLine, and
+    GetWarningStringLineCount to iphreeqc.py
+  - rename GetSelectedOutputCol to GetSelectedOutputColumn in iphreeqc.py
+  - in test_iphreeqc package, create test ex4_err function in test_ex4.py
+    module to demonstrate iphreeqc error handling (and quarks)
+  - code and documentation format updates
+  
 See [here](https://github.com/stuart-nolan/iphreeqc-py/commits/master) for
 specifics.

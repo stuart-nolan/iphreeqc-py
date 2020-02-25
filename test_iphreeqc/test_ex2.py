@@ -148,10 +148,11 @@ def ex2(lib="libiphreeqc.so", database="phreeqc.dat"):
     selOutByCol = list(zip(*selectedOutput[2:]))
     ug1_temp = selOutByCol[8]
     ug1_anhydriteSI = selOutByCol[9]
-    ug1_gypsumSI = selOutByCol[10]      
+    ug1_gypsumSI = selOutByCol[10]
 
     try:
         import matplotlib.pyplot as plt
+        print("Close the matplotlib plot window to continue...")
         plt.plot(ug1_temp,ug1_gypsumSI,'rs',label='Gypsum')
         plt.plot(ug1_temp,ug1_anhydriteSI,'gD',label='Anhydrite')
         plt.xlabel(ug1_xlabel)

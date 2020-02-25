@@ -46,11 +46,21 @@ License Usage Reference
 """
 import ctypes
 import os
-__version__ = "0.1a3"
+__version__ = "0.1a4"
 
 class iphreeqc():
     def __init__(self, iPhreeqcLib):
         self.iPhreeqcLib=iPhreeqcLib
+
+        self.errors = {0: 'Success (IPQ_OK)',
+                       1: 'An error occured: ',
+                       -1: 'Failure, Out of memory (IPQ_OUTOFMEMORY)',
+                       -2: 'Failure, Invalid VAR type (IPQ_BADVARTYPE)',
+                       -3: 'Failure, Invalid argument (IPQ_INVALIDARG)',
+                       -4: 'Failure, Invalid row (IPQ_INVALIDROW)',
+                       -5: 'Failure, Invalid column (IPQ_INVALIDCOL)',
+                       -6: 'Failure, Invalid instance id (IPQ_BADINSTANCE)'}
+
         ipcl = ctypes.cdll.LoadLibrary(self.iPhreeqcLib)
 
         methods = [('_AccumulateLine', ipcl.AccumulateLine,
@@ -60,7 +70,8 @@ class iphreeqc():
                    ('_AddWarning', ipcl.AddWarning,
                     [ctypes.c_int, ctypes.c_char_p], ctypes.c_int),
                    ('_ClearAccumulatedLines',
-                    ipcl.ClearAccumulatedLines, [ctypes.c_int], ctypes.c_int),
+                    ipcl.ClearAccumulatedLines, [ctypes.c_int],
+                    ctypes.c_int),
                    ('_CreateIPhreeqc', ipcl.CreateIPhreeqc,
                     [ctypes.c_voidp], ctypes.c_int),
                    ('_DestroyIPhreeqc', ipcl.DestroyIPhreeqc,
@@ -115,12 +126,13 @@ class iphreeqc():
                     [ctypes.c_int],  ctypes.c_char_p),
                    ('_GetOutputFileName', ipcl.GetOutputFileName,
                     [ctypes.c_int],  ctypes.c_char_p),
-                   ('_GetOutputFileOn', ipcl.GetOutputFileOn, [ctypes.c_int],
-                    ctypes.c_int),
+                   ('_GetOutputFileOn', ipcl.GetOutputFileOn,
+                    [ctypes.c_int], ctypes.c_int),
                    ('_GetOutputStringLine', ipcl.GetOutputStringLine,
                     [ctypes.c_int, ctypes.c_int], ctypes.c_char_p),
-                   ('_GetOutputStringLineCount', ipcl.GetOutputStringLineCount,
-                    [ctypes.c_int], ctypes.c_int),
+                   ('_GetOutputStringLineCount',
+                    ipcl.GetOutputStringLineCount, [ctypes.c_int],
+                    ctypes.c_int),
                    ('_GetOutputStringOn', ipcl.GetOutputStringOn,
                     [ctypes.c_int], ctypes.c_int),
                    ('_GetSelectedOutputColumnCount',
@@ -138,8 +150,9 @@ class iphreeqc():
                    ('_GetSelectedOutputRowCount',
                     ipcl.GetSelectedOutputRowCount, [ctypes.c_int],
                     ctypes.c_int),
-                   ('_GetSelectedOutputString', ipcl.GetSelectedOutputString,
-                    [ctypes.c_int],  ctypes.c_char_p),
+                   ('_GetSelectedOutputString',
+                    ipcl.GetSelectedOutputString, [ctypes.c_int],
+                    ctypes.c_char_p),
                    ('_GetSelectedOutputStringLine',
                     ipcl.GetSelectedOutputStringLine,
                     [ctypes.c_int, ctypes.c_int], ctypes.c_char_p),
@@ -154,6 +167,13 @@ class iphreeqc():
                      ctypes.POINTER(_VAR)], ctypes.c_int),
                    ('_GetVersionString', ipcl.GetVersionString,
                     [ctypes.c_voidp], ctypes.c_char_p),
+                   ('_GetWarningString', ipcl.GetWarningString,
+                    [ctypes.c_int], ctypes.c_char_p),
+                   ('_GetWarningStringLine', ipcl.GetWarningStringLine,
+                    [ctypes.c_int, ctypes.c_int], ctypes.c_char_p),
+                   ('_GetWarningStringLineCount',
+                    ipcl.GetWarningStringLineCount, [ctypes.c_int],
+                    ctypes.c_int),
                    ('_LoadDatabase', ipcl.LoadDatabase,
                     [ctypes.c_int, ctypes.c_char_p], ctypes.c_int),
                    ('_LoadDatabaseString', ipcl.LoadDatabaseString,
@@ -196,116 +216,107 @@ class iphreeqc():
                    ('_SetSelectedOutputFileName',
                     ipcl.SetSelectedOutputFileName,
                     [ctypes.c_int, ctypes.c_char_p], ctypes.c_int),
-                   ('_SetSelectedOutputFileOn', ipcl.SetSelectedOutputFileOn,
-                    [ctypes.c_int, ctypes.c_int], ctypes.c_int),
+                   ('_SetSelectedOutputFileOn',
+                    ipcl.SetSelectedOutputFileOn, [ctypes.c_int,
+                                                   ctypes.c_int],
+                    ctypes.c_int),
                    ('_SetSelectedOutputStringOn',
                     ipcl.SetSelectedOutputStringOn,
                     [ctypes.c_int, ctypes.c_int], ctypes.c_int)
         ]
-
         for name, obj, argtypes, restype in methods:
             obj.argtypes = argtypes
             obj.restype = restype
             setattr(self, name, obj)
+
         self.var = _VAR()
-        self.phc_error_count = 0
-        self.phc_warning_count = 0
-        self.phc_database_error_count = 0
-        self.id = self.CreateIPhreeqc()
-        self.iPhreeqcLib_version = self.GetVersionString()
+        self.id = ""
+        self.CreateIPhreeqc()
+
         self.database = ""
-        self.runFileName=""
-        self.errorFileName=self.GetErrorFileName()
-        self.logFileName=self.GetLogFileName()
         self.dumpFileName=self.GetDumpFileName()
+        self.errorFileName=self.GetErrorFileName()
+        self.iPhreeqcLib_version = self.GetVersionString()
+        self.logFileName=self.GetLogFileName()
         self.outputFileName=self.GetOutputFileName()
+        self.runFileName=""
         self.selectedOutputFileName=self.GetSelectedOutputFileName()
+        self.SetErrorStringOn() # Default to ON for _RaiseException
 
-    @staticmethod
-    def _RaisePhreeqcError(error_code):
+    def _RaiseIPhreeqcError(self, code, error="unknown error code"):
         """
-        Parameters
-            code, integer error code between -6 to 0 
-        """
-        error_codes = {0: 'Success (IPQ_OK)',
-                       -1: 'Failure, Out of memory (IPQ_OUTOFMEMORY)',
-                       -2: 'Failure, Invalid VAR type (IPQ_BADVARTYPE)',
-                       -3: 'Failure, Invalid argument (IPQ_INVALIDARG)',
-                       -4: 'Failure, Invalid row (IPQ_INVALIDROW)',
-                       -5: 'Failure, Invalid column (IPQ_INVALIDCOL)',
-                       -6: 'Failure, Invalid instance id (IPQ_BADINSTANCE)'}
+        Raise an IPhreeqcError exception based on an integer code
 
-        error = error_codes[error_code]
-        if error:
-            raise PhreeqcException(error)
-
-    def _RaiseStringError(self, errors):
+        Parameters:
+            code, integer error code between -6 to 1; 0 = no error 
         """
-        Raise an exception with message from IPhreeqc error.
-        
-        Parameters
-        errors: integer
-           Number of error occured
-        
-        """
-        if errors > 1:
-            msg = '%s errors occured.\n' % errors
-        elif errors == 1:
-            msg = 'An error occured.\n'
+        if code in self.errors:
+            error = self.errors[code]
+            if error == 0:
+                return
         else:
-            msg = 'Wrong error number.'
-        raise Exception(msg + self.GetErrorString())
-
+            raise IPhreeqcError("%s: %s" % (code, error))
+        
+        if code < 0:
+            raise IPhreeqcError("%s: %s" % (code, error))
+        elif code == 1:
+            raise IPhreeqcError("%s: IPhreeqc:\n%s" %
+                                (code, self.GetErrorString()))
+            
     def AccumulateLine(self, line):
-        errors = self._AccumulateLine(self.id, bytes(line, 'utf-8'))
-        if errors != 0:
-            self._RaiseStringError(errors)
+        code = self._AccumulateLine(self.id, bytes(line, 'utf-8'))
+        if code != 0:
+            self._RaiseIPhreeqcError(code)
     
-    def AddError(self, phc_error_msg):
+    def AddError(self, error):
         """
-        Appends the given error message and increments the error count.  
-        Internally used fo create an error condition
-        
-        Parameters
-        phc_error_msg: string
-            Error message to append
-        """
-        errors = self._AddError(self.id, bytes(phc_error_msg, 'utf-8'))
-        if errors < 0:
-            self._RaiseStringError(errors)
-        else:
-            self.phc_error_count = errors
-
-    def AddWarning(self, phc_warn_msg):
-        """
-        Appends the given warning message and increments the warning count.
-        Internally used to create warning condition
+        Appends the given error message to the iphreeqc error string  
+        buffer
         
         Parameters:
-            phc_warn_msg, string warning massage to add
+            error, string message to append
+
+        Returns:
+            code, the current "error count" if successful
         """
-        errors = self._AddWarning(self.id, bytes(phc_warn_msg, 'utf-8'))
-        if errors < 0:
-            self._RaiseStringError(errors)
+        code = self._AddError(self.id, bytes(error, 'utf-8'))
+        if code < 0:
+            self._RaiseIPhreeqcError(code)
         else:
-            self.phc_warning_count = errors
+            return code
+
+    def AddWarning(self, warning):
+        """
+        Appends the given warning message to the iphreeqc warning string
+        buffer
+        
+        Parameters:
+            warning, string massage to append
+
+        Returns:
+            code, the current "warning count" if successful
+        """
+        code = self._AddWarning(self.id, bytes(warning, 'utf-8'))
+        if code < 0:
+            self._RaiseIPhreeqcError(code)
+        else:
+            return code
 
     def ClearAccumulatedLines(self):
-        errors = self._ClearAccumulatedLines(self.id)
-        if errors != 0:
-            self._RaiseStringError(errors)
+        code = self._ClearAccumulatedLines(self.id)
+        if code != 0:
+            self._RaiseIPhreeqcError(code)
 
     def CreateIPhreeqc(self):
-        error_code = self._CreateIPhreeqc(ctypes.c_voidp())
-        if error_code < 0:
-            self._RaisePhreeqcError(error_code)
-        id = error_code
-        return id
+        code = self._CreateIPhreeqc(ctypes.c_voidp())
+        if code < 0:
+            self._RaiseIPhreeqcError(code)
+        self.id = code
         
     def DestroyIPhreeqc(self):
-        error_code = self._DestroyIPhreeqc(self.id)
-        if error_code < 0:
-            self._RaisePhreeqcError(error_code)
+        code = self._DestroyIPhreeqc(self.id)
+        if code < 0:
+            self._RaiseIPhreeqcError(code)
 
     def GetComponent(self, index):
         """
@@ -343,8 +354,8 @@ class iphreeqc():
     def GetDumpStringLine(self, lidx):
         """
         Parameters:
-            lidx, integer line index (can be negative to index back from the 
-                  end of string)
+            lidx, integer line index (can be negative to index back from 
+                  the end of string)
         
         Returns:
             one line from dump string at line lidx        
@@ -425,7 +436,7 @@ class iphreeqc():
         """
         result = self._GetNthSelectedOutputUserNumber(self.id, idx)
         if result < 0:
-            self._RaiseStringError(result)
+            self._RaiseIPhreeqcError(result)
 
         return result
     
@@ -473,7 +484,7 @@ class iphreeqc():
             rows.append(row)
         return rows
 
-    def GetSelectedOutputCol(self, cidx):
+    def GetSelectedOutputColumn(self, cidx):
         """
         Return one column (all rows) from selected output at column index cidx
 
@@ -558,10 +569,11 @@ class iphreeqc():
         Returns:
             val, one selected output value at ridx and cidx
         """
-        error_code = self._GetSelectedOutputValue(self.id, ridx, cidx,
-                                                  self.var)
-        if error_code != 0:
-            self._RaisePhreeqcError(error_code)
+        code = self._GetSelectedOutputValue(self.id, ridx, cidx,
+                                            self.var)
+        if code != 0:
+            self._RaiseIPhreeqcError(code)
+            
         if self.var.type == 3:
             val = self.var.value.double_value
         elif self.var.type == 2:
@@ -570,30 +582,56 @@ class iphreeqc():
             val = self.var.value.string_value.decode('utf-8')
         elif self.var.type == 0:
             val = None
+
         if self.var.type == 1:
-            self.raise_error(value.error_code)
+            self._RaiseIPhreeqcError(value.error_code)
+
         return val
 
     def GetVersionString(self):
         return self._GetVersionString(self.id).decode('utf-8')
 
+    def GetWarningString(self):
+        return self._GetWarningString(self.id).decode('utf-8')
+
+    def GetWarningStringLine(self, lidx):
+        """
+        Parameters:
+            lidx, integer line index (can be negative to index back from the 
+                  end of string)
+        
+        Returns:
+            one line from warning string at line lidx        
+        """
+        if lidx < 0:
+            lidx = self.GetWarningStringLineCount() + lidx
+        return self._GetWarningStringLine(self.id,
+                                          lidx).decode('utf-8',
+                                                       errors='ignore')
+ 
+    def GetWarningStringLineCount(self):
+        return self._GetWarningStringLineCount(self.id)
+ 
     def LoadDatabase(self, database):
         """
-        Usage: see example below
-
         Parameters:
             database, fully qualified path name string to the iphreeqc
                       database to load.  E.g.,
                       "/<iphreeqc library install PREFIX>
                        /share/doc/iphreeqc/database/phreeqc.dat"
         """
-        self.database=database
-        self.phc_database_error_count = self._LoadDatabase(
-            self.id, bytes(self.database, 'utf-8'))
+        code = self._LoadDatabase(self.id, bytes(database, 'utf-8'))
+        if code == 0:
+            self.database=database
+        else:
+            self._RaiseIPhreeqcError(code)
 
     def LoadDatabaseString(self, input_string):
-        self.phc_database_error_count = self._LoadDatabaseString(
-            self.id, ctypes.c_char_p(bytes(input_string, 'utf-8')))
+        code = self._LoadDatabaseString(self.id,
+                                        ctypes.c_char_p(bytes(input_string,
+                                                              'utf-8')))
+        if code != 0:
+            self._RaiseIPhreeqcError(code)
 
     def OutputAccumulatedLines(self):
         """
@@ -604,9 +642,9 @@ class iphreeqc():
     def RunAccumulated(self):
         """
         """
-        errors = self._RunAccumulated(self.id)
-        if errors != 0:
-            self._RaiseStringError(errors)
+        code = self._RunAccumulated(self.id)
+        if code != 0:
+            self._RaiseIPhreeqcError(code)
     
     def RunFile(self,runFQPN):
         """
@@ -614,142 +652,147 @@ class iphreeqc():
             runFQPN, fully qualified path name string to a "run" file 
             containing valid phreeqc instructions
         """
-        self.runFileName=runFQPN
-        errors = self._RunFile(self.id, bytes(runFQPN, 'utf-8'))
-        if errors != 0:
-            self._RaiseStringError(errors)
+        code = self._RunFile(self.id, bytes(runFQPN, 'utf-8'))
+        if code == 0:
+            self.runFileName=runFQPN
+        else:
+            self._RaiseIPhreeqcError(code)
             
     def RunString(self, cmd_string):
         """
         Parameters:
             cmd_string, phreeqc command string to be executed
         """
-        errors = self._RunString(self.id,
-                                  ctypes.c_char_p(bytes(cmd_string, 'utf-8')))
-        if errors != 0:
-            self._RaiseStringError(errors)
+        code = self._RunString(self.id,
+                               ctypes.c_char_p(bytes(cmd_string, 'utf-8')))
+        if code != 0:
+            self._RaiseIPhreeqcError(code)
     
     def SetCurrentSelectedOutputUserNumber(self, unum):
         """
         Parameters:
             unum, integer user number
         """
-        errors = self._SetCurrentSelectedOutputUserNumber(self.id, unum)
-        if errors != 0:
-            self._RaiseStringError(errors)
+        code = self._SetCurrentSelectedOutputUserNumber(self.id, unum)
+        if code != 0:
+            self._RaiseIPhreeqcError(code)
  
     def SetDumpFileName(self,dumpFQPN):
         """
         Parameters:
             dmpFQPN, fully qualified path name string to a dump file
         """
-        self.dumpFile = dumpFileFQPN
-        errors = self._SetDumpFileName(self.id,  bytes(dumpFQPN, 'utf-8'))
-        if errors != 0:
-            self._RaiseStringError(errors)
+        code = self._SetDumpFileName(self.id,  bytes(dumpFQPN, 'utf-8'))
+        if code == 0:
+            self.dumpFile = dumpFileFQPN
+        else:
+            self._RaiseIPhreeqcError(code)
             
     def SetDumpFileOn(self,val=1):
         """
         Parameters:
             val, 0 = OFF; 1 = ON
         """
-        errors = self._SetDumpFileOn(self.id,val)
-        if errors != 0:
-            self._RaiseStringError(errors)
+        code = self._SetDumpFileOn(self.id,val)
+        if code != 0:
+            self._RaiseIPhreeqcError(code)
 
     def SetDumpStringOn(self,val=1):
         """
         Parameters:
             val, 0 = OFF; 1 = ON
         """
-        errors = self._SetDumpStringOn(self.id,val)
-        if errors != 0:
-            self._RaiseStringError(errors)
+        code = self._SetDumpStringOn(self.id,val)
+        if code != 0:
+            self._RaiseIPhreeqcError(code)
 
     def SetErrorFileName(self,errorFQPN):
         """
         Parameters:
             errFQPN, fully qualified path name string to an error file
         """
-        self.errorFileName=errorFQPN
-        errors = self._SetErrorFileName(self.id,  bytes(errorFQPN, 'utf-8'))
-        if errors != 0:
-            self._RaiseStringError(errors)
+        code = self._SetErrorFileName(self.id,  bytes(errorFQPN, 'utf-8'))
+        if code == 0:
+            self.errorFileName=errorFQPN
+        else:
+            self._RaiseIPhreeqcError(code)
             
     def SetErrorFileOn(self,val=1):
         """
         Parameters:
             val, 0 = OFF; 1 = ON
         """
-        errors = self._SetErrorFileOn(self.id,val)
-        if errors != 0:
-            self._RaiseStringError(errors)
+        code = self._SetErrorFileOn(self.id,val)
+        if code != 0:
+            self._RaiseIPhreeqcError(code)
 
     def SetErrorStringOn(self,val=1):
         """
         Parameters:
             val, 0 = OFF; 1 = ON
         """
-        errors = self._SetErrorStringOn(self.id,val)
-        if errors != 0:
-            self._RaiseStringError(errors)
+        code = self._SetErrorStringOn(self.id,val)
+        if code != 0:
+            self._RaiseIPhreeqcError(code)
 
     def SetLogFileName(self,logFQPN):
         """
         Parameters:
             logFQPN, fully qualified path name string to a log file
         """
-        self.logFileName=logFQPN
-        errors = self._SetLogFileName(self.id,  bytes(logFQPN, 'utf-8'))
-        if errors != 0:
-            self._RaiseStringError(errors)
+        code = self._SetLogFileName(self.id,  bytes(logFQPN, 'utf-8'))
+        if code == 0:
+            self.logFileName=logFQPN
+        else:
+            self._RaiseIPhreeqcError(code)
             
     def SetLogFileOn(self,val=1):
         """
         Parameters:
             val, 0 = OFF; 1 = ON
         """
-        errors = self._SetLogFileOn(self.id,val)
-        if errors != 0:
-            self._RaiseStringError(errors)
+        code = self._SetLogFileOn(self.id,val)
+        if code != 0:
+            self._RaiseIPhreeqcError(code)
 
     def SetLogStringOn(self,val=1):
         """
         Parameters:
             val, 0 = OFF; 1 = ON
         """
-        errors = self._SetLogStringOn(self.id,val)
-        if errors != 0:
-            self._RaiseStringError(errors)
+        code = self._SetLogStringOn(self.id,val)
+        if code != 0:
+            self._RaiseIPhreeqcError(code)
 
     def SetOutputFileName(self,outputFQPN):
         """
         Parameters:
             outputFQPN, fully qualified path name string to an output file
         """
-        self.outputFileName = outputFQPN
-        errors = self._SetOutputFileName(self.id,
-                                         bytes(outputFQPN, 'utf-8'))
-        if errors != 0:
-            self._RaiseStringError(errors)
+        code = self._SetOutputFileName(self.id,
+                                       bytes(outputFQPN, 'utf-8'))
+        if code == 0:
+            self.outputFileName = outputFQPN
+        else:
+            self._RaiseIPhreeqcError(code)
             
     def SetOutputFileOn(self,val=1):
         """
         Parameters:
             val, 0 = OFF; 1 = ON
         """
-        errors = self._SetOutputFileOn(self.id,val)
-        if errors != 0:
-            self._RaiseStringError(errors)
+        code = self._SetOutputFileOn(self.id,val)
+        if code != 0:
+            self._RaiseIPhreeqcError(code)
 
     def SetOutputStringOn(self,val=1):
         """
         Parameters:
             val, 0 = OFF, 1 = ON
         """
-        errors = self._SetOutputStringOn(self.id,val)
-        if errors != 0:
-            self._RaiseStringError(errors)
+        code = self._SetOutputStringOn(self.id,val)
+        if code != 0:
+            self._RaiseIPhreeqcError(code)
 
     def SetSelectedOutputFileName(self,selectedOutputFQPN):
         """
@@ -757,21 +800,22 @@ class iphreeqc():
             selectedOutFQPN, fully qualified path name string to a selected 
             output file
         """
-        self.selectedOutputFileName = selectedOutputFQPN
-        errors = self._SetSelectedOutputFileName(self.id,
-                                                 bytes(selectedOutputFQPN,
-                                                       'utf-8'))
-        if errors != 0:
-            self._RaiseStringError(errors)
+        code = self._SetSelectedOutputFileName(self.id,
+                                               bytes(selectedOutputFQPN,
+                                                     'utf-8'))
+        if code == 0:
+            self.selectedOutputFileName = selectedOutputFQPN
+        else:
+            self._RaiseIPhreeqcError(code)
             
     def SetSelectedOutputFileOn(self,val=1):
         """
         Parameters:
             val, 0 = OFF; 1 = ON
         """
-        errors = self._SetSelectedOutputFileOn(self.id, val)
-        if errors != 0:
-            self._RaiseStringError(errors)
+        code = self._SetSelectedOutputFileOn(self.id, val)
+        if code != 0:
+            self._RaiseIPhreeqcError(code)
             
 
     def SetSelectedOutputStringOn(self,val=1):
@@ -779,10 +823,9 @@ class iphreeqc():
         Parameters:
             val, 0 = OFF; 1 = ON
         """
-        errors = self._SetSelectedOutputStringOn(self.id, val)
-        if errors != 0:
-            self._RaiseStringError(errors)
-            
+        code = self._SetSelectedOutputStringOn(self.id, val)
+        if code != 0:
+            self._RaiseIPhreeqcError(code)            
 
 class _VARUNION(ctypes.Union):
     # pylint: disable-msg=R0903
@@ -806,8 +849,21 @@ class _VAR(ctypes.Structure):
     _fields_ = [('type', ctypes.c_int),
                 ('value', _VARUNION)]
 
-class PhreeqcException(Exception):
-    """Error in Phreeqc call.
+class IPhreeqcError(Exception):
+    """
+    User defined python exception
+
+    Example usage external to iphreeqc.py (see
+    test_iphreeqc/test_ex4.py):
+        import iphreeqc as ipc
+        ipcl = ipc.iphreeqc(lib='path/to/lib', 
+                            database='path/to/database')
+        errorMsg = "iphreeqc-py error code: 2 and message: ALARM!!!"
+        code = 2
+        try:
+            ipcl._RaiseIPhreeqcError(code,error=errorMsg)
+        except ipc.IPhreeqcError as ipce:
+            print(ipce)
     """
     pass
 
@@ -969,6 +1025,8 @@ def ex1_mod(lib="libiphreeqc.so", database="phreeqc.dat"):
     print("\n\n*** Output String ***")
     outStr = ipcl.GetOutputString()
     print(outStr)
+
+    return ipcl # for use in an interactive python session
     
 if __name__ == '__main__':
     #
@@ -989,4 +1047,4 @@ if __name__ == '__main__':
                           'database',
                           'phreeqc.dat')
 
-    ex1_mod(lib,database)
+    ex1_mod_ = ex1_mod(lib,database)
