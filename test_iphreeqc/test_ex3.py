@@ -38,12 +38,12 @@ Try:
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 import os
-import iphreeqc
-__version__ = iphreeqc.__version__
+import iphreeqc as ipc
+__version__ = ipc.__version__
 
 def ex3(lib="libiphreeqc.so", database="phreeqc.dat"):
     """
-    Run file (unmodified) ex3 from Phreeqc examples and print output
+    Run file examples/ex3 from Phreeqc examples and print output
     string
 
     Parameters:
@@ -55,7 +55,7 @@ def ex3(lib="libiphreeqc.so", database="phreeqc.dat"):
               interactive python session
     """
     if os.path.isfile(lib):
-        ipcl=iphreeqc.iphreeqc(lib)
+        ipcl=ipc.iphreeqc(lib)
     else:
         print("IPhreeqc library not found: %s" % lib)
         return
@@ -68,7 +68,7 @@ def ex3(lib="libiphreeqc.so", database="phreeqc.dat"):
 
     print("IPhreeqc shared library: %s" % ipcl.iPhreeqcLib)
     print("IPhreeqc version: %s" % ipcl.iPhreeqcLib_version)
-    print("iphreeqc-py version: %s" % iphreeqc.__version__)
+    print("iphreeqc-py version: %s" % ipc.__version__)
 
     ipcl.SetErrorStringOn()
     ipcl.SetOutputStringOn()
@@ -141,7 +141,7 @@ def ex3_mod(lib="libiphreeqc.so", database="phreeqc.dat"):
         RunAccumulated and/or RunString
     """
     if os.path.isfile(lib):
-        ipcl=iphreeqc.iphreeqc(lib)
+        ipcl=ipc.iphreeqc(lib)
     else:
         print("IPhreeqc library not found: %s" % lib)
         return
@@ -154,7 +154,7 @@ def ex3_mod(lib="libiphreeqc.so", database="phreeqc.dat"):
 
     print("IPhreeqc shared library: %s" % ipcl.iPhreeqcLib)
     print("IPhreeqc version: %s" % ipcl.iPhreeqcLib_version)
-    print("iphreeqc-py version: %s" % iphreeqc.__version__)
+    print("iphreeqc-py version: %s" % ipc.__version__)
 
     ipcl.SetLogStringOn()
     ipcl.SetErrorStringOn()

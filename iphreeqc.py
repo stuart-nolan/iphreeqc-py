@@ -46,14 +46,14 @@ License Usage Reference
 """
 import ctypes
 import os
-__version__ = "0.1a4"
+__version__ = "0.1a5"
 
 class iphreeqc():
     def __init__(self, iPhreeqcLib):
         self.iPhreeqcLib=iPhreeqcLib
 
         self.errors = {0: 'Success (IPQ_OK)',
-                       1: 'An error occured: ',
+                       1: 'Error string',
                        -1: 'Failure, Out of memory (IPQ_OUTOFMEMORY)',
                        -2: 'Failure, Invalid VAR type (IPQ_BADVARTYPE)',
                        -3: 'Failure, Invalid argument (IPQ_INVALIDARG)',
@@ -248,7 +248,8 @@ class iphreeqc():
         Raise an IPhreeqcError exception based on an integer code
 
         Parameters:
-            code, integer error code between -6 to 1; 0 = no error 
+            code, integer error code between -6 to 1; 0 = no error
+            error, user defined error message string
         """
         if code in self.errors:
             error = self.errors[code]
@@ -260,8 +261,8 @@ class iphreeqc():
         if code < 0:
             raise IPhreeqcError("%s: %s" % (code, error))
         elif code == 1:
-            raise IPhreeqcError("%s: IPhreeqc:\n%s" %
-                                (code, self.GetErrorString()))
+            raise IPhreeqcError("%s: %s\n%s" % (code, error,
+                                                self.GetErrorString()))
             
     def AccumulateLine(self, line):
         code = self._AccumulateLine(self.id, bytes(line, 'utf-8'))
@@ -322,6 +323,9 @@ class iphreeqc():
         """
         Parameters:
             index, zero-based integer index of the component
+        
+        Returns:
+            component, string component name
         """
         component = self._GetComponent(self.id, index).decode('utf-8')
         if not component:
@@ -354,14 +358,11 @@ class iphreeqc():
     def GetDumpStringLine(self, lidx):
         """
         Parameters:
-            lidx, integer line index (can be negative to index back from 
-                  the end of string)
+            lidx, integer line index
         
         Returns:
             one line from dump string at line lidx        
         """
-        if lidx < 0:
-            lidx = self.GetDumpStringLineCount() + lidx
         return self._GetDumpStringLine(self.id,
                                       lidx).decode('utf-8', errors='ignore')
  
@@ -383,14 +384,11 @@ class iphreeqc():
     def GetErrorStringLine(self, lidx):
         """
         Parameters:
-            lidx, integer line index (can be negative to index back from the 
-                  end of string)
+            lidx, integer line index
         
         Returns:
             one line from error string at line lidx        
         """
-        if lidx < 0:
-            lidx = self.GetErrorStringLineCount() + lidx
         return self._GetErrorStringLine(self.id,
                                       lidx).decode('utf-8', errors='ignore')
  
@@ -412,14 +410,11 @@ class iphreeqc():
     def GetLogStringLine(self, lidx):
         """
         Parameters:
-            lidx, integer line index (can be negative to index back from the 
-                  end of string)
+            lidx, integer line index
         
         Returns:
             one line from log string at line lidx        
         """
-        if lidx < 0:
-            lidx = self.GetLogStringLineCount() + lidx
         return self._GetLogStringLine(self.id,
                                       lidx).decode('utf-8', errors='ignore')
  
@@ -432,7 +427,15 @@ class iphreeqc():
     def GetNthSelectedOutputUserNumber(self, idx):
         """
         Parameters:
-            idx, integer index
+            idx, inter index of the iphreeqc internal zero based array 
+                 corresponding to the "user number" defined and input by
+                 the user.  i.e. if 5 consecutive user numbers from 1 to 
+                 5 are input next to the selected_output blocks, then
+                 idx 0 = user number 1, idx 1 = user number 2, ..., idx 4
+                 = user number 5.
+
+        Returns:
+            result, the user number corresponding to idx
         """
         result = self._GetNthSelectedOutputUserNumber(self.id, idx)
         if result < 0:
@@ -452,14 +455,11 @@ class iphreeqc():
     def GetOutputStringLine(self, lidx):
         """
         Parameters:
-            lidx, integer line index (can be negative to index back from the 
-                  end of string)
+            lidx, integer line index
         
         Returns:
             one line from output string at line lidx        
         """
-        if lidx < 0:
-            lidx = self.GetOutputStringLineCount() + lidx
         return self._GetOutputStringLine(self.id,
                                          lidx).decode('utf-8', errors='ignore')
  
@@ -542,14 +542,11 @@ class iphreeqc():
     def GetSelectedOutputStringLine(self, lidx):
         """
         Parameters:
-            lidx, integer line index (can be negative to index back from 
-                  the end of string)
+            lidx, integer line index
         
         Returns:
             one line from output string at line lidx        
         """
-        if lidx < 0:
-            lidx = self.GetSelectedOutputStringLineCount() + lidx
         return self._GetSelectedOutputStringLine(self.id,
                                                  lidx).decode('utf-8',
                                                               errors='ignore')
@@ -597,14 +594,11 @@ class iphreeqc():
     def GetWarningStringLine(self, lidx):
         """
         Parameters:
-            lidx, integer line index (can be negative to index back from the 
-                  end of string)
+            lidx, integer line index
         
         Returns:
             one line from warning string at line lidx        
         """
-        if lidx < 0:
-            lidx = self.GetWarningStringLineCount() + lidx
         return self._GetWarningStringLine(self.id,
                                           lidx).decode('utf-8',
                                                        errors='ignore')
@@ -900,6 +894,10 @@ def ex1_mod(lib="libiphreeqc.so", database="phreeqc.dat"):
     Parameters:
         lib, FQPN to the iphreeqc shared library
         database, FQPN to the iphreeqc database "phreeqc.dat"
+
+    Return:
+        ipcl, ex1_mod iphreeqc class instance.  For potential use in an 
+              interactive python session
 
     Notes:
         The input string argument to AccumulateLine is derived from the 

@@ -2,7 +2,7 @@
 A python 3+ ctypes wrapper for selected function prototypes defined by
 IPhreeqc version 3 in IPhreeqc.h and Var.h.
 
-Version 0.1a4 is an "alpha" pre-release.
+Version 0.1a5 is an "alpha" pre-release.
 
 See "Change Log" below for recent changes.
 
@@ -18,11 +18,11 @@ The author is not affiliated with the USGS or the Phreeqc project.
 
 #### Option 2
 
-    pip install git+https://github.com/stuart-nolan/iphreeqc-py.git
+    pip install git+https://github.com/stuart-nolan/iphreeqc-py.git@v0.1a5
     
 #### Option 3
 
-    git clone https://github.com/stuart-nolan/iphreeqc-py.git
+    git clone -b 'v0.1a5' --single-branch https://github.com/stuart-nolan/iphreeqc-py.git
     cd iphreeqc-py; python setup.py install
 
 This python package intentionally does not install or come with an IPhreeqc
@@ -108,23 +108,23 @@ This work is derived from IPhreeqcPy.
 ## Change Log
 iphreeqc-py is a work in progress and is not fully tested
 
-Notable changes from 0.1a3:
-  - escape square brackets ("\[|\]") in README.md for non links
-  - delete ex3_mod\* from test_iphreeqc/examples/
-  - rename PhreeqcException class to IPhreeqcError in iphreeqc.py
-  - remove staticmethod _RaisePhreeqcError from iphreeqc.py
-  - remove instance method _RaiseStringError from iphreeqc.py
-  - implement instance method _RaiseIPhreeqcError in iphreeqc.py
-  - rework error handling for LoadDatabase, RunFile, SetDumpFileName,
-    SetErrorFileName, SetLogFileName, SetOutputFileName,
-    SetSelectedOutputFileName in iphreeqc.py
-  - rework AddError and AddWarning in iphreeqc.py
-  - add GetWarningString, GetWarningStringLine, and
-    GetWarningStringLineCount to iphreeqc.py
-  - rename GetSelectedOutputCol to GetSelectedOutputColumn in iphreeqc.py
-  - in test_iphreeqc package, create test ex4_err function in test_ex4.py
-    module to demonstrate iphreeqc error handling (and quarks)
-  - code and documentation format updates
+Notable changes from 0.1a4:
+  - remove functionality to index back from the value returned by
+    functions such as GetDumpStringLineCount given a negative index
+    argument to the python functions GetDumpStringLine, GetErrorStringLine,
+    GetLogStringLine, GetOutputStringLine, GetSelectedOutputStringLine,
+    and GetWarningStringLine.  See test_ex4.py for examples of how
+    retaining this functionality could lead to issues.
+  - change default error text for error code 1 to 'Error string' and
+    edit the _RaiseIphreeqcError method accordingly
+  - edit README.md download options 2 and 3 for installing an iphreeqc-py
+    release via github by release tag
+  - implement X.X<pre-release>X.devX versioning for development releases
+    i.e. after the 0.1a5 release, the iphreeqc.py __version__ will be
+    0.1a6.dev0 on un-tagged git master branch commits until 0.1a6 is
+    released (and the git tag v0.1a6 is pushed to github)
+  - miscellaneous documentation edits
+  - add test_iphreeqc/test_ex5.py module
   
 See [here](https://github.com/stuart-nolan/iphreeqc-py/commits/master) for
 specifics.

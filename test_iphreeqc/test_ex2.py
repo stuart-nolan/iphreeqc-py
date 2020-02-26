@@ -38,13 +38,13 @@ Try:
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 import os
-import iphreeqc
-__version__ = iphreeqc.__version__
+import iphreeqc as ipc
+__version__ = ipc.__version__
 
 def ex2(lib="libiphreeqc.so", database="phreeqc.dat"):
     """
-    Run file ex2 from Phreeqc examples and use python to process selected
-    output results
+    Run file examples/ex2 from Phreeqc examples and use python to process
+    selected output results
 
     Demonstrates:
         * RunFile(<FQPN>)
@@ -60,6 +60,10 @@ def ex2(lib="libiphreeqc.so", database="phreeqc.dat"):
         lib, FQPN to the iphreeqc shared library
         database, FQPN to the iphreeqc database "phreeqc.dat"  
     
+    Return:
+        ipcl, ex2 iphreeqc class instance.  For potential use in an 
+              interactive python session
+
     Notes
      * Plots requested by the ex2 input file are not generated.  There is
        no indication regarding the (lack of) plots in the error, log, 
@@ -89,7 +93,7 @@ def ex2(lib="libiphreeqc.so", database="phreeqc.dat"):
        See ex1_mod found in iphreeqc.py for a demonstration.
     """
     if os.path.isfile(lib):
-        ipcl=iphreeqc.iphreeqc(lib)
+        ipcl=ipc.iphreeqc(lib)
     else:
         print("IPhreeqc library not found: %s" % lib)
         return
@@ -102,7 +106,7 @@ def ex2(lib="libiphreeqc.so", database="phreeqc.dat"):
 
     print("IPhreeqc shared library: %s" % ipcl.iPhreeqcLib)
     print("IPhreeqc version: %s" % ipcl.iPhreeqcLib_version)
-    print("iphreeqc-py version: %s" % iphreeqc.__version__)
+    print("iphreeqc-py version: %s" % ipc.__version__)
 
     ipcl.SetErrorStringOn()
     ipcl.SetOutputStringOn()

@@ -1,5 +1,5 @@
 """
-test_IPhreeqcError, test ex4 and error handling in iphreeqc.py
+test_ex4.py, run file examples/ex4 and test error handling in iphreeqc.py
 
 ## USAGE
 Try:
@@ -23,7 +23,7 @@ Try:
     iphreeqc-py Copyright (C) 2020 Stuart Nolan
 
 ## License Notice
-    test_IPhreeqcError.py Copyright (C) 2020 Stuart Nolan
+    test_ex4.py Copyright (C) 2020 Stuart Nolan
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as
@@ -43,7 +43,7 @@ __version__ = ipc.__version__
 
 def ex4_err(lib="libiphreeqc.so", database="phreeqc.dat"):
     """
-    Run file ex4 and then demo iphreeqc error handling
+    Run file examples/ex4 and then demo iphreeqc error handling
 
     Demonstrates:
         * _RaiseIPhreeqcError
@@ -62,7 +62,11 @@ def ex4_err(lib="libiphreeqc.so", database="phreeqc.dat"):
     Parameters:
         lib, FQPN to the iphreeqc shared library
         database, FQPN to the iphreeqc database "phreeqc.dat"
-    
+
+    Return:
+        ipcl, ex4_err iphreeqc class instance.  For potential use in an 
+              interactive python session
+
     Notes:
     """
     if os.path.isfile(lib):
