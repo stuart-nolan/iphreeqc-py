@@ -46,23 +46,12 @@ License Usage Reference
 """
 import ctypes
 import os
-__version__ = "0.1a5"
+__version__ = "0.1a6.dev0"
 
 class iphreeqc():
     def __init__(self, iPhreeqcLib):
         self.iPhreeqcLib=iPhreeqcLib
-
-        self.errors = {0: 'Success (IPQ_OK)',
-                       1: 'Error string',
-                       -1: 'Failure, Out of memory (IPQ_OUTOFMEMORY)',
-                       -2: 'Failure, Invalid VAR type (IPQ_BADVARTYPE)',
-                       -3: 'Failure, Invalid argument (IPQ_INVALIDARG)',
-                       -4: 'Failure, Invalid row (IPQ_INVALIDROW)',
-                       -5: 'Failure, Invalid column (IPQ_INVALIDCOL)',
-                       -6: 'Failure, Invalid instance id (IPQ_BADINSTANCE)'}
-
         ipcl = ctypes.cdll.LoadLibrary(self.iPhreeqcLib)
-
         methods = [('_AccumulateLine', ipcl.AccumulateLine,
                     [ctypes.c_int, ctypes.c_char_p], ctypes.c_int),
                    ('_AddError', ipcl.AddError,
@@ -229,6 +218,15 @@ class iphreeqc():
             obj.restype = restype
             setattr(self, name, obj)
 
+        self.errors = {0: 'Success (IPQ_OK)',
+                       1: 'Error string',
+                       -1: 'Failure, Out of memory (IPQ_OUTOFMEMORY)',
+                       -2: 'Failure, Invalid VAR type (IPQ_BADVARTYPE)',
+                       -3: 'Failure, Invalid argument (IPQ_INVALIDARG)',
+                       -4: 'Failure, Invalid row (IPQ_INVALIDROW)',
+                       -5: 'Failure, Invalid column (IPQ_INVALIDCOL)',
+                       -6: 'Failure, Invalid instance id (IPQ_BADINSTANCE)'}
+
         self.var = _VAR()
         self.id = ""
         self.CreateIPhreeqc()
@@ -250,11 +248,15 @@ class iphreeqc():
         Parameters:
             code, integer error code between -6 to 1; 0 = no error
             error, user defined error message string
+
+        Returns:
+            error, if and only if code == 0.  The default error string for
+                   code == 0 is "Success (IPQ_OK)"
         """
         if code in self.errors:
             error = self.errors[code]
-            if error == 0:
-                return
+            if code == 0:
+                return error
         else:
             raise IPhreeqcError("%s: %s" % (code, error))
         
@@ -427,7 +429,7 @@ class iphreeqc():
     def GetNthSelectedOutputUserNumber(self, idx):
         """
         Parameters:
-            idx, inter index of the iphreeqc internal zero based array 
+            idx, integer index of the iphreeqc internal zero based array 
                  corresponding to the "user number" defined and input by
                  the user.  i.e. if 5 consecutive user numbers from 1 to 
                  5 are input next to the selected_output blocks, then

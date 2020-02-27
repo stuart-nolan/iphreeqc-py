@@ -81,11 +81,6 @@ def ex4_err(lib="libiphreeqc.so", database="phreeqc.dat"):
         print("database phreeqc.dat not found: %s" % database)
         return
 
-    print("IPhreeqc shared library: %s" % ipcl.iPhreeqcLib)
-    print("IPhreeqc database: %s" % ipcl.database)
-    print("IPhreeqc version: %s" % ipcl.iPhreeqcLib_version)
-    print("iphreeqc-py version: %s" % ipc.__version__)
-
     ipcl.SetErrorStringOn()
     ipcl.SetOutputStringOn()
 
@@ -106,9 +101,23 @@ def ex4_err(lib="libiphreeqc.so", database="phreeqc.dat"):
     enableLogCmd="KNOBS\n-logfile\nEND"
     ipcl.RunString(enableLogCmd)
 
-    eCount = ipcl.AddError("*** Intentionally generated errors below ***")
-    print(ipcl.GetErrorString())
+    print("IPhreeqc shared library: %s" % ipcl.iPhreeqcLib)
+    print("IPhreeqc database: %s" % ipcl.database)
+    print("IPhreeqc version: %s" % ipcl.iPhreeqcLib_version)
+    print("iphreeqc-py version: %s" % ipc.__version__)
 
+    print("\n*** Intentionally generated errors below ***")
+    eCount = ipcl.AddError("AddError test message 1")
+    errorMsg = "iphreeqc-py error code: 2 and message: ALARM!!!"
+    for code in range(-6,3):
+        try:
+            print("\nTrying error code: %s:" % code)
+            res = ipcl._RaiseIPhreeqcError(code,error=errorMsg)
+            print(res)
+        except ipc.IPhreeqcError as ipce:
+            print(ipce)
+
+    print("\n*** Generate 2 errors via bad args to RunFile and LoadDatabase ***")
     try:
         ipcl.RunFile('path/to/invalid/file')
     except ipc.IPhreeqcError as ipce:
@@ -119,62 +128,69 @@ def ex4_err(lib="libiphreeqc.so", database="phreeqc.dat"):
     except ipc.IPhreeqcError as ipce:
         print(ipce)
         
-    errorMsg = "iphreeqc-py error code: 2 and message: ALARM!!!"
-    for code in range(-6,3):
-        try:
-            print("\nTrying error code: %s:" % code)
-            ipcl._RaiseIPhreeqcError(code,error=errorMsg)
-        except ipc.IPhreeqcError as ipce:
-            print("\n*** IPhreeqcError Output ***")
-            print(ipce)
-
-    print("\n*** Error String ***")
-    print(ipcl.GetErrorString())
+    print("\n*** After 2 errors and 1 AddError ***")
+    errStr = ipcl.GetErrorString()
     print("GetErrorStringLineCount: %s" % ipcl.GetErrorStringLineCount())
+    print("AddError: %s" % eCount)
+    print("Number of '\\n' in GetErrorString: %s" %
+          errStr.count('\n'))
 
-    eCount = ipcl.AddError("ADD ERROR 1")
-    print("\n*** Error String ***")
-    print(ipcl.GetErrorString())
-    print("GetErrorStringLineCount: %s" % ipcl.GetErrorStringLineCount())
-    print("Error Count: %s" % eCount)
+    print("\n*** AddError again, then GetErrorString and GetErrorStringLineCount ***")
+    eCount = ipcl.AddError("AddError test message 2")
+    print("GetErrorString:")
+    errStr = ipcl.GetErrorString()
+    print(errStr)
+    print("\nGetErrorStringLineCount: %s" % ipcl.GetErrorStringLineCount())
+    print("AddError: %s" % eCount)
+    print("Number of '\\n' in GetErrorString: %s" %
+          errStr.count('\n'))
 
-    eCount = ipcl.AddError("\nADD ERROR 2")
-    print("\n*** Error String ***")
-    print(ipcl.GetErrorString())
-    print("GetErrorStringLineCount: %s" % ipcl.GetErrorStringLineCount())
-    print("Error Count: %s" % eCount)
+    print("\n*** AddError yet again ***")
+    eCount = ipcl.AddError("AddError test message 3")
+    print("GetErrorString:")
+    errStr = ipcl.GetErrorString()
+    print(errStr)
+    print("\nGetErrorStringLineCount: %s" % ipcl.GetErrorStringLineCount())
+    print("AddError: %s" % eCount)
+    print("Number of '\\n' in GetErrorString: %s" %
+          errStr.count('\n'))
     
-    print("\n*** Error String via GetErrorStringLine(<line index>) ***")
+    print("\n*** GetErrorStringLine(<line index>) ***")
     for lidx in range(0,eCount):
         print("Error String Line %s: %s" % (lidx,
                                             ipcl.GetErrorStringLine(lidx)))    
-    print("\n*** Warning String ***")
-    print(ipcl.GetWarningString())
-    print("GetWarningStringLineCount: %s" % ipcl.GetWarningStringLineCount())
+    print("\n\n*** GetWarningString and GetWarningStringLineCount ***")
+    warnStr = ipcl.GetWarningString()
+    print(warnStr)
+    print("\nGetWarningStringLineCount: %s" % ipcl.GetWarningStringLineCount())
+    print("Number of '\\n' in GetWarningString: %s" %
+          warnStr.count('\n'))
 
-    wCount = ipcl.AddWarning("ADD WARNING 1\n")
-    print("\n*** Warning String ***")
+    print("\n*** AddWarning and GetWarningString ***")
+    wCount = ipcl.AddWarning("AddWarning test message 1")
     print(ipcl.GetWarningString())
-    print("GetWarningStringLineCount: %s" % ipcl.GetWarningStringLineCount())
-    print("Warning Count: %s" % wCount)
+    print("\nGetWarningStringLineCount: %s" % ipcl.GetWarningStringLineCount())
+    print("AddWarning: %s" % wCount)
+    print("Number of '\\n' in GetWarningString: %s" %
+          warnStr.count('\n'))
 
-    wCount = ipcl.AddWarning("ADD WARNING 2\n")
-    print("\n*** Warning String ***")
+    print("\n*** AddWarning and GetWarningString again ***")
+    wCount = ipcl.AddWarning("AddWarning test message 2")
     print(ipcl.GetWarningString())
-    print("GetWarningStringLineCount: %s" % ipcl.GetWarningStringLineCount())
-    print("Warning Count: %s" % wCount)
+    print("\nGetWarningStringLineCount: %s" % ipcl.GetWarningStringLineCount())
+    print("AddWarning: %s" % wCount)
     
-    print("\n*** Warning String via GetWarningStringLine(<line index>) ***")
+    print("\n*** GetWarningStringLine(<line index>) ***")
     for lidx in range(0,wCount):
         print("Warning String Line %s: %s" % (lidx,
-                                              ipcl.GetWarningStringLine(lidx)))    
-    print("\n*** Log String ***")
+                                              ipcl.GetWarningStringLine(lidx)))   
+    print("\n*** GetLogString and GetLogStringLineCount ***")
     logStr = ipcl.GetLogString() 
     print(logStr)
     print("GetLogStringLineCount: %s" % ipcl.GetLogStringLineCount())
-    print("Number of lines returned by GetLogString: %s" %
+    print("Number of '\\n' in GetLogString: %s" %
           logStr.count('\n'))
-    print("\n*** Log String via GetLogStringLine(<line index>) ***")
+    print("\n*** GetLogStringLine(<line index>) ***")
     for lidx in range(0,logStr.count('\n')):
         print("Log String Line %s: %s" % (lidx,
                                           ipcl.GetLogStringLine(lidx))) 
@@ -182,11 +198,13 @@ def ex4_err(lib="libiphreeqc.so", database="phreeqc.dat"):
 
     Error, log, and warning string behaviour notes:
      * the error string buffer is cleared when a new error is generated
-       by an iphreeqc shared library method, except:
-       - the error string buffer is retained between succusive calls to
+       by a native iphreeqc method, except:
+       - the error string buffer is retained between successive calls to
          AddError
-     * AddError returns the "error count" but does not increment
-       the the value returned by GetErrorStringLineCount
+     * AddError appends successive calls to the error string buffer without
+       a newline ('\\n')
+     * AddError returns the number of times it has been called.  It does
+       not take into account errors generated by native iphreeqc methods 
      * GetErrorStringLine(<line index>) will not return error string
        buffer lines added by AddError
      * AddWarning, GetWarningStringLineCount, and 
@@ -194,10 +212,11 @@ def ex4_err(lib="libiphreeqc.so", database="phreeqc.dat"):
        counterparts
      * the log string buffer retains errors generated by iphreeqc
        shared library methods but,
-     * the methods AddError and AddWarning only add messages to their 
+     * the methods AddError and AddWarning only append messages to their 
        respective string buffers, *not the log string buffer.*
      * error strings captured in the log string buffer do not increment
-       the value returned by GetLogStringLineCount
+       the value returned by GetLogStringLineCount but newlines are
+       included in the log string buffer
 
      Who knew.
 
