@@ -46,12 +46,12 @@ License Usage Reference
 """
 import ctypes
 import os
-__version__ = "0.1a6.dev0"
+__version__ = "0.1a6.dev1"
 
 class iphreeqc():
-    def __init__(self, iPhreeqcLib):
-        self.iPhreeqcLib=iPhreeqcLib
-        ipcl = ctypes.cdll.LoadLibrary(self.iPhreeqcLib)
+    def __init__(self, IPhreeqcLib):
+        self.IPhreeqcLib=IPhreeqcLib
+        ipcl = ctypes.cdll.LoadLibrary(self.IPhreeqcLib)
         methods = [('_AccumulateLine', ipcl.AccumulateLine,
                     [ctypes.c_int, ctypes.c_char_p], ctypes.c_int),
                    ('_AddError', ipcl.AddError,
@@ -234,7 +234,7 @@ class iphreeqc():
         self.database = ""
         self.dumpFileName=self.GetDumpFileName()
         self.errorFileName=self.GetErrorFileName()
-        self.iPhreeqcLib_version = self.GetVersionString()
+        self.IPhreeqcLib_version = self.GetVersionString()
         self.logFileName=self.GetLogFileName()
         self.outputFileName=self.GetOutputFileName()
         self.runFileName=""
@@ -273,14 +273,15 @@ class iphreeqc():
     
     def AddError(self, error):
         """
-        Appends the given error message to the iphreeqc error string  
+        Appends the given error message to the IPhreeqc error string  
         buffer
         
         Parameters:
             error, string message to append
 
         Returns:
-            code, the current "error count" if successful
+            code, if successful, the number of times AddError has been
+                  called
         """
         code = self._AddError(self.id, bytes(error, 'utf-8'))
         if code < 0:
@@ -290,7 +291,7 @@ class iphreeqc():
 
     def AddWarning(self, warning):
         """
-        Appends the given warning message to the iphreeqc warning string
+        Appends the given warning message to the IPhreeqc warning string
         buffer
         
         Parameters:
@@ -429,7 +430,7 @@ class iphreeqc():
     def GetNthSelectedOutputUserNumber(self, idx):
         """
         Parameters:
-            idx, integer index of the iphreeqc internal zero based array 
+            idx, integer index of the IPhreeqc internal zero based array 
                  corresponding to the "user number" defined and input by
                  the user.  i.e. if 5 consecutive user numbers from 1 to 
                  5 are input next to the selected_output blocks, then
@@ -611,10 +612,10 @@ class iphreeqc():
     def LoadDatabase(self, database):
         """
         Parameters:
-            database, fully qualified path name string to the iphreeqc
+            database, fully qualified path name string to the IPhreeqc
                       database to load.  E.g.,
-                      "/<iphreeqc library install PREFIX>
-                       /share/doc/iphreeqc/database/phreeqc.dat"
+                      "/<IPhreeqc library install PREFIX>
+                       /share/doc/IPhreeqc/database/phreeqc.dat"
         """
         code = self._LoadDatabase(self.id, bytes(database, 'utf-8'))
         if code == 0:
@@ -869,14 +870,14 @@ def ex1_mod(lib="libiphreeqc.so", database="phreeqc.dat"):
 
     Demonstrates:
         * instantiating the iphreeqc class
-            - initialize iPhreeqcLib
+            - initialize IPhreeqcLib
             - CreateIPhreeqc()
             - GetErrorFileName(), intialize errorFileName
             - GetLogFileName(), initialize logFileName
             - GetDumpFileName(), initialize dumpFileName
             - GetOutputFileName(), initialize outputFileName
             - GetSelectedOutputFileName(), initalize selectedOutputFileName
-            - GetVersionString(), initialize iPhreeqcLib_version
+            - GetVersionString(), initialize IPhreeqcLib_version
         * AccumulateLine(<string>)
         * LoadDatabase(<database_FQPN>) i.e. loading an IPhreeqc database
         * GetDumpString()
@@ -894,8 +895,8 @@ def ex1_mod(lib="libiphreeqc.so", database="phreeqc.dat"):
         * SetOutputStringOn([val=0|1])
     
     Parameters:
-        lib, FQPN to the iphreeqc shared library
-        database, FQPN to the iphreeqc database "phreeqc.dat"
+        lib, FQPN to the IPhreeqc shared library
+        database, FQPN to the IPhreeqc database "phreeqc.dat"
 
     Return:
         ipcl, ex1_mod iphreeqc class instance.  For potential use in an 
@@ -917,8 +918,8 @@ def ex1_mod(lib="libiphreeqc.so", database="phreeqc.dat"):
         print("database phreeqc.dat not found: %s" % database)
         return
 
-    print("IPhreeqc shared library: %s" % ipcl.iPhreeqcLib)
-    print("IPhreeqc version: %s" % ipcl.iPhreeqcLib_version)
+    print("IPhreeqc shared library: %s" % ipcl.IPhreeqcLib)
+    print("IPhreeqc version: %s" % ipcl.IPhreeqcLib_version)
     print("iphreeqc-py version: %s" % __version__)
     
     ipcl.AccumulateLine(
@@ -1030,7 +1031,7 @@ def ex1_mod(lib="libiphreeqc.so", database="phreeqc.dat"):
     
 if __name__ == '__main__':
     #
-    # EDIT 'lib' to point to the iphreeqc shared library location
+    # EDIT 'lib' to point to the IPhreeqc shared library location
     #
     install_prefix = os.path.join(os.getenv("HOME"), 'local')
     lib = os.path.join(install_prefix,

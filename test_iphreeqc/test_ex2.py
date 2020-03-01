@@ -57,11 +57,11 @@ def ex2(lib="libiphreeqc.so", database="phreeqc.dat"):
     See also "ex1_mod" found in iphreeqc.py
 
     Parameters:
-        lib, FQPN to the iphreeqc shared library
-        database, FQPN to the iphreeqc database "phreeqc.dat"  
+        lib, FQPN to the IPhreeqc shared library
+        database, FQPN to the IPhreeqc database "phreeqc.dat"  
     
     Return:
-        ipcl, ex2 iphreeqc class instance.  For potential use in an 
+        ipcl, ex2 IPhreeqc class instance.  For potential use in an 
               interactive python session
 
     Notes
@@ -104,8 +104,8 @@ def ex2(lib="libiphreeqc.so", database="phreeqc.dat"):
         print("database phreeqc.dat not found: %s" % database)
         return
 
-    print("IPhreeqc shared library: %s" % ipcl.iPhreeqcLib)
-    print("IPhreeqc version: %s" % ipcl.iPhreeqcLib_version)
+    print("IPhreeqc shared library: %s" % ipcl.IPhreeqcLib)
+    print("IPhreeqc version: %s" % ipcl.IPhreeqcLib_version)
     print("iphreeqc-py version: %s" % ipc.__version__)
 
     ipcl.SetErrorStringOn()
@@ -179,7 +179,7 @@ def ex2(lib="libiphreeqc.so", database="phreeqc.dat"):
         
 if __name__ == '__main__':
     #
-    # EDIT 'lib' to point to the iphreeqc shared library location
+    # EDIT 'lib' to point to the IPhreeqc shared library location
     #
     install_prefix = os.path.join(os.getenv("HOME"), 'local')
     lib = os.path.join(install_prefix,
