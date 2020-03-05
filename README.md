@@ -2,7 +2,7 @@
 A python 3+ ctypes wrapper for selected function prototypes defined by
 IPhreeqc version 3 in IPhreeqc.h and Var.h.
 
-Version 0.1a5 is an "alpha" pre-release.
+Version 0.1a6 is an "alpha" pre-release.
 
 See "Change Log" below for recent changes.
 
@@ -18,11 +18,11 @@ The author is not affiliated with the USGS or the Phreeqc project.
 
 #### Option 2
 
-    pip install git+https://github.com/stuart-nolan/iphreeqc-py.git@v0.1a5
+    pip install git+https://github.com/stuart-nolan/iphreeqc-py.git@v0.1a6
     
 #### Option 3
 
-    git clone -b 'v0.1a5' --single-branch https://github.com/stuart-nolan/iphreeqc-py.git
+    git clone -b 'v0.1a6' --single-branch https://github.com/stuart-nolan/iphreeqc-py.git
     cd iphreeqc-py; python setup.py install
 
 This python package intentionally does not install or come with an IPhreeqc
@@ -108,23 +108,26 @@ This work is derived from IPhreeqcPy.
 ## Change Log
 iphreeqc-py is a work in progress and is not fully tested
 
-Notable changes from 0.1a4:
-  - remove functionality to index back from the value returned by
-    functions such as GetDumpStringLineCount given a negative index
-    argument to the python functions GetDumpStringLine, GetErrorStringLine,
-    GetLogStringLine, GetOutputStringLine, GetSelectedOutputStringLine,
-    and GetWarningStringLine.  See test_ex4.py for examples of how
-    retaining this functionality could lead to issues.
-  - change default error text for error code 1 to 'Error string' and
-    edit the _RaiseIphreeqcError method accordingly
-  - edit README.md download options 2 and 3 for installing an iphreeqc-py
-    release via github by release tag
-  - implement X.X<pre-release>X.devX versioning for development releases
-    i.e. after the 0.1a5 release, the iphreeqc.py __version__ will be
-    0.1a6.dev0 on un-tagged git master branch commits until 0.1a6 is
-    released (and the git tag v0.1a6 is pushed to github)
-  - miscellaneous documentation edits
-  - add test_iphreeqc/test_ex5.py module
+Notable changes from 0.1a5:
+  - fix 'if error == 0:' bug in _RaiseIPhreeqcError
+  - rework _RaiseIPhreeqcError to return self.errors[code] if and
+    only if code == 0 (otherwise raise an IPhreeqcError exception)
+  - rework _RaiseIPhreeqcError for integer error codes
+  - remove SetErrorStringOn in iphreeqc class __init__
+  - call SetErrorStringOn in _RaiseIPhreeqcError if code is integer and
+    not in self.errors
+  - edit test_ex4.py, ex4_err to demonstrate IPhreeqc error, warning, and
+    log string buffer behavior less confusingly
+  - avoid relative terms (e.g. "native") when referring to methods and
+    libraries in the doc strings,
+  - "iphreeqc-py", "iphreeqc.py", etc. refer to this project,
+  - "IPhreeqc" refers to the USGS PHREEQC project, edit source accordingly
+  - "from iphreeqc import iphreeqc" is intentional, iphreeqc-py is a
+    python wrapper for the IPhreeqc libraries
+  - add test_ex6.py to test_iphreeqc (demo output to files in working dir)
+
+TODO:
+  - add test_iphreeqc/test_ex6.py (demo get/set file handling) 
   
 See [here](https://github.com/stuart-nolan/iphreeqc-py/commits/master) for
 specifics.

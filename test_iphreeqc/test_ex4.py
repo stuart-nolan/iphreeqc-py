@@ -108,8 +108,8 @@ def ex4_err(lib="libiphreeqc.so", database="phreeqc.dat"):
 
     print("\n*** Intentionally generated errors below ***")
     eCount = ipcl.AddError("AddError test message 1")
-    errorMsg = "iphreeqc-py error code: 2 and message: ALARM!!!"
-    for code in range(-6,3):
+    errorMsg = "iphreeqc-py custom error code message: ALARM!!!"
+    for code in range(-6,2):
         try:
             print("\nTrying error code: %s:" % code)
             res = ipcl._RaiseIPhreeqcError(code,error=errorMsg)

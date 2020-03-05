@@ -46,7 +46,7 @@ License Usage Reference
 """
 import ctypes
 import os
-__version__ = "0.1a6.dev1"
+__version__ = "0.1a6"
 
 class iphreeqc():
     def __init__(self, IPhreeqcLib):
@@ -186,7 +186,7 @@ class iphreeqc():
                     [ctypes.c_int, ctypes.c_int], ctypes.c_int),
                    ('_SetErrorFileName', ipcl.SetErrorFileName,
                     [ctypes.c_int, ctypes.c_char_p], ctypes.c_int),
-                   ('_SetErrorFileOn', ipcl.SetErrorStringOn,
+                   ('_SetErrorFileOn', ipcl.SetErrorFileOn,
                     [ctypes.c_int, ctypes.c_int], ctypes.c_int),
                    ('_SetErrorStringOn', ipcl.SetErrorStringOn,
                     [ctypes.c_int, ctypes.c_int], ctypes.c_int),
@@ -219,7 +219,6 @@ class iphreeqc():
             setattr(self, name, obj)
 
         self.errors = {0: 'Success (IPQ_OK)',
-                       1: 'Error string',
                        -1: 'Failure, Out of memory (IPQ_OUTOFMEMORY)',
                        -2: 'Failure, Invalid VAR type (IPQ_BADVARTYPE)',
                        -3: 'Failure, Invalid argument (IPQ_INVALIDARG)',
@@ -239,15 +238,20 @@ class iphreeqc():
         self.outputFileName=self.GetOutputFileName()
         self.runFileName=""
         self.selectedOutputFileName=self.GetSelectedOutputFileName()
-        self.SetErrorStringOn() # Default to ON for _RaiseException
 
-    def _RaiseIPhreeqcError(self, code, error="unknown error code"):
+    def _RaiseIPhreeqcError(self, code, error="Unknown error code"):
         """
-        Raise an IPhreeqcError exception based on an integer code
+        Raise an IPhreeqcError exception based on a code
 
         Parameters:
-            code, integer error code between -6 to 1; 0 = no error
-            error, user defined error message string
+            code, error code (defaults in self.errors): 
+                  * -6 to -1, IPhreeqc defined
+                  * 0, IPhreeqc defined as no error
+                  * any other integer code, IPhreeqc defined as the number
+                    of errors encountered or user defined (e.g. AddError).  
+                    Includes GetErrorString in exception
+                  * any other code is user defined (iphreeqc-py) or an 
+                    unknown error
 
         Returns:
             error, if and only if code == 0.  The default error string for
@@ -257,14 +261,17 @@ class iphreeqc():
             error = self.errors[code]
             if code == 0:
                 return error
-        else:
             raise IPhreeqcError("%s: %s" % (code, error))
-        
-        if code < 0:
-            raise IPhreeqcError("%s: %s" % (code, error))
-        elif code == 1:
+
+        if isinstance(code,int):
+            try:
+                self.SetErrorStringOn()
+            except IPhreeqcError as ipe:
+                print(ipe)
             raise IPhreeqcError("%s: %s\n%s" % (code, error,
                                                 self.GetErrorString()))
+
+        raise IPhreeqcError("%s: %s" % (code, error))
             
     def AccumulateLine(self, line):
         code = self._AccumulateLine(self.id, bytes(line, 'utf-8'))
@@ -621,14 +628,14 @@ class iphreeqc():
         if code == 0:
             self.database=database
         else:
-            self._RaiseIPhreeqcError(code)
+            self._RaiseIPhreeqcError(code, "IPhreeqc errors encountered")
 
     def LoadDatabaseString(self, input_string):
         code = self._LoadDatabaseString(self.id,
                                         ctypes.c_char_p(bytes(input_string,
                                                               'utf-8')))
         if code != 0:
-            self._RaiseIPhreeqcError(code)
+            self._RaiseIPhreeqcError(code, "IPhreeqc errors encountered")
 
     def OutputAccumulatedLines(self):
         """
@@ -641,7 +648,7 @@ class iphreeqc():
         """
         code = self._RunAccumulated(self.id)
         if code != 0:
-            self._RaiseIPhreeqcError(code)
+            self._RaiseIPhreeqcError(code, "IPhreeqc errors encountered")
     
     def RunFile(self,runFQPN):
         """
@@ -653,7 +660,7 @@ class iphreeqc():
         if code == 0:
             self.runFileName=runFQPN
         else:
-            self._RaiseIPhreeqcError(code)
+            self._RaiseIPhreeqcError(code, "IPhreeqc errors encountered")
             
     def RunString(self, cmd_string):
         """
@@ -663,7 +670,7 @@ class iphreeqc():
         code = self._RunString(self.id,
                                ctypes.c_char_p(bytes(cmd_string, 'utf-8')))
         if code != 0:
-            self._RaiseIPhreeqcError(code)
+            self._RaiseIPhreeqcError(code, "IPhreeqc errors encountered")
     
     def SetCurrentSelectedOutputUserNumber(self, unum):
         """
@@ -681,7 +688,7 @@ class iphreeqc():
         """
         code = self._SetDumpFileName(self.id,  bytes(dumpFQPN, 'utf-8'))
         if code == 0:
-            self.dumpFile = dumpFileFQPN
+            self.dumpFileName = dumpFQPN
         else:
             self._RaiseIPhreeqcError(code)
             
@@ -710,7 +717,7 @@ class iphreeqc():
         """
         code = self._SetErrorFileName(self.id,  bytes(errorFQPN, 'utf-8'))
         if code == 0:
-            self.errorFileName=errorFQPN
+            self.errorFileName = errorFQPN
         else:
             self._RaiseIPhreeqcError(code)
             
