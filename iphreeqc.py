@@ -46,7 +46,7 @@ License Usage Reference
 """
 import ctypes
 import os
-__version__ = "0.1a6"
+__version__ = "0.1b0"
 
 class iphreeqc():
     def __init__(self, IPhreeqcLib):
@@ -247,7 +247,7 @@ class iphreeqc():
             code, error code (defaults in self.errors): 
                   * -6 to -1, IPhreeqc defined
                   * 0, IPhreeqc defined as no error
-                  * any other integer code, IPhreeqc defined as the number
+                  * any positive integer code, IPhreeqc defined as the number
                     of errors encountered or user defined (e.g. AddError).  
                     Includes GetErrorString in exception
                   * any other code is user defined (iphreeqc-py) or an 
@@ -268,6 +268,7 @@ class iphreeqc():
                 self.SetErrorStringOn()
             except IPhreeqcError as ipe:
                 print(ipe)
+
             raise IPhreeqcError("%s: %s\n%s" % (code, error,
                                                 self.GetErrorString()))
 
@@ -644,8 +645,6 @@ class iphreeqc():
         self._OutputAccumulatedLines(self.id)
     
     def RunAccumulated(self):
-        """
-        """
         code = self._RunAccumulated(self.id)
         if code != 0:
             self._RaiseIPhreeqcError(code, "IPhreeqc errors encountered")
@@ -821,7 +820,6 @@ class iphreeqc():
         if code != 0:
             self._RaiseIPhreeqcError(code)
             
-
     def SetSelectedOutputStringOn(self,val=1):
         """
         Parameters:

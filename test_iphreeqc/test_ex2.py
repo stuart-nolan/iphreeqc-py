@@ -71,8 +71,7 @@ def ex2(lib="libiphreeqc.so", database="phreeqc.dat"):
        will fail silently if requested from iphreeqc.py under Linux. 
 
        GetSelectedOutputArray can be used to fetch selected output data 
-       into a python list as originally demonstrated by Ravi Patel in 
-       IPhreeqcPy.
+       into a python list.
 
        The selected output data can be inspected by using a python package 
        such as tabulate and the ex2 plots can be recreated by using a 

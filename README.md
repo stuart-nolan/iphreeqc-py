@@ -2,14 +2,14 @@
 A python 3+ ctypes wrapper for selected function prototypes defined by
 IPhreeqc version 3 in IPhreeqc.h and Var.h.
 
-Version 0.1a6 is an "alpha" pre-release.
+Version 0.1b0 is a "beta" release.
 
 See "Change Log" below for recent changes.
 
 This package is tailored to the author's preference but is made available in
 the event others find it useful.  
 
-The author is not affiliated with the USGS or the Phreeqc project.  
+The author is not affiliated with the USGS or the PHREEQC project.  
 
 ## Install
 #### Option 1
@@ -18,11 +18,11 @@ The author is not affiliated with the USGS or the Phreeqc project.
 
 #### Option 2
 
-    pip install git+https://github.com/stuart-nolan/iphreeqc-py.git@v0.1a6
+    pip install git+https://github.com/stuart-nolan/iphreeqc-py.git@v0.1b0
     
 #### Option 3
 
-    git clone -b 'v0.1a6' --single-branch https://github.com/stuart-nolan/iphreeqc-py.git
+    git clone -b 'v0.1b0' --single-branch https://github.com/stuart-nolan/iphreeqc-py.git
     cd iphreeqc-py; python setup.py install
 
 This python package intentionally does not install or come with an IPhreeqc
@@ -64,8 +64,8 @@ For the above examples, IPhreeqc.h and Var.h are in
 
     ${HOME}/local/include/iphreeqc-3.6.2-15100/
 
-Last tested with iphreeqc-3.6.2-15100 and python 3.8.1 in a virtual environment 
-on Ubuntu 18.04.4 LTS, February 2020.
+Last tested with iphreeqc-3.6.2-15100 and python 3.8.3 in a virtual environment 
+on Ubuntu 18.04.4 LTS, June 2020.
 
 ## References & Attribution
     <https://www.usgs.gov/software/phreeqc-version-3>
@@ -108,26 +108,10 @@ This work is derived from IPhreeqcPy.
 ## Change Log
 iphreeqc-py is a work in progress and is not fully tested
 
-Notable changes from 0.1a5:
-  - fix 'if error == 0:' bug in _RaiseIPhreeqcError
-  - rework _RaiseIPhreeqcError to return self.errors[code] if and
-    only if code == 0 (otherwise raise an IPhreeqcError exception)
-  - rework _RaiseIPhreeqcError for integer error codes
-  - remove SetErrorStringOn in iphreeqc class __init__
-  - call SetErrorStringOn in _RaiseIPhreeqcError if code is integer and
-    not in self.errors
-  - edit test_ex4.py, ex4_err to demonstrate IPhreeqc error, warning, and
-    log string buffer behavior less confusingly
-  - avoid relative terms (e.g. "native") when referring to methods and
-    libraries in the doc strings,
-  - "iphreeqc-py", "iphreeqc.py", etc. refer to this project,
-  - "IPhreeqc" refers to the USGS PHREEQC project, edit source accordingly
-  - "from iphreeqc import iphreeqc" is intentional, iphreeqc-py is a
-    python wrapper for the IPhreeqc libraries
-  - add test_ex6.py to test_iphreeqc (demo output to files in working dir)
-
-TODO:
-  - add test_iphreeqc/test_ex6.py (demo get/set file handling) 
+Notable changes from 0.1a6:
+  - minor code cleanup
+  - add test_iphreeqc/test_ex7.py
+  - bump release version to "beta"
   
 See [here](https://github.com/stuart-nolan/iphreeqc-py/commits/master) for
 specifics.
