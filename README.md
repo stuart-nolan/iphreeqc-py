@@ -2,7 +2,7 @@
 A python 3+ ctypes wrapper for selected function prototypes defined by
 IPhreeqc version 3 in IPhreeqc.h and Var.h.
 
-Version 0.1b0 is a "beta" release.
+Version 0.1.
 
 See "Change Log" below for recent changes.
 
@@ -18,11 +18,11 @@ The author is not affiliated with the USGS or the PHREEQC project.
 
 #### Option 2
 
-    pip install git+https://github.com/stuart-nolan/iphreeqc-py.git@v0.1b0
+    pip install git+https://github.com/stuart-nolan/iphreeqc-py.git@v0.1
     
 #### Option 3
 
-    git clone -b 'v0.1b0' --single-branch https://github.com/stuart-nolan/iphreeqc-py.git
+    git clone -b 'v0.1' --single-branch https://github.com/stuart-nolan/iphreeqc-py.git
     cd iphreeqc-py; python setup.py install
 
 This python package intentionally does not install or come with an IPhreeqc
@@ -33,7 +33,7 @@ An example IPhreeqc install is below.
 See IPhreeqc.h and Var.h.
 
 ## Example iphreeqc-3.6.2-15100 install
-Using Ubuntu 18.04.4 LTS with gcc (Ubuntu 7.4.0-1ubuntu1~18.04.1) 7.4.0:
+Using Ubuntu 20.04.2 LTS with gcc (Ubuntu 9.3.0-17ubuntu1~20.04) 9.3.0:
 
     screen # optional, start screen session
     tmpDir=$(mktemp -d)
@@ -44,7 +44,7 @@ Using Ubuntu 18.04.4 LTS with gcc (Ubuntu 7.4.0-1ubuntu1~18.04.1) 7.4.0:
     # configure options used by the author
     ./configure --libdir=${HOME}/local/lib/iphreeqc-3.6.2-15100 --includedir=${HOME}/local/include/iphreeqc-3.6.2-15100 --docdir=${HOME}/local/share/doc/iphreeqc-3.6.2-15100 CFLAGS="-g -O2 -march=native" CXXFLAGS="-g -O2 -march=native"
     ncp1=$(expr $(cat /proc/cpuinfo | grep processor | wc -l) + 1)
-    make -j $ncp1 V=s 2>&1 | tee ipcBuild-$(date +"%Y%m%d-%H%M").log | grep -i '[^_-\"a-z]error[^_-.a-z]'
+    make -j $ncp1 V=s 2>&1 | tee ipcBuild-$(date +"%Y%m%d-%H%M").log | grep -i '[^_\"a-z-]error[^_.a-z-]'
     make install
 
 #### Example iphreeqc-py tests
@@ -56,6 +56,7 @@ configured, built, and installed as described above, try:
 
 #### Clean up
 
+    cd /tmp
     rm -fr $tmpDir
     exit # screen session
 
@@ -64,8 +65,8 @@ For the above examples, IPhreeqc.h and Var.h are in
 
     ${HOME}/local/include/iphreeqc-3.6.2-15100/
 
-Last tested with iphreeqc-3.6.2-15100 and python 3.8.3 in a virtual environment 
-on Ubuntu 18.04.4 LTS, June 2020.
+Last tested with iphreeqc-3.6.2-15100 and python 3.9.4 in a virtual environment 
+on Ubuntu 20.04.2 LTS, April 2021.
 
 ## References & Attribution
     <https://www.usgs.gov/software/phreeqc-version-3>
@@ -106,12 +107,9 @@ This work is derived from IPhreeqcPy.
     <https://www.gnu.org/licenses/gpl-howto.html>
 
 ## Change Log
-iphreeqc-py is a work in progress and is not fully tested
-
-Notable changes from 0.1a6:
-  - minor code cleanup
-  - add test_iphreeqc/test_ex7.py
-  - bump release version to "beta"
+Notable changes from 0.1b0:
+  - updated iphreeqc build example for Ubuntu 20.04 LTS
+  - release version 0.1
   
 See [here](https://github.com/stuart-nolan/iphreeqc-py/commits/master) for
 specifics.

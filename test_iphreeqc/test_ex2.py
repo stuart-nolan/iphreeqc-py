@@ -87,7 +87,7 @@ def ex2(lib="libiphreeqc.so", database="phreeqc.dat"):
            DUMP
              -all
            KNOBS
-    	      -logfile
+    	     -logfile
 
        See ex1_mod found in iphreeqc.py for a demonstration.
     """

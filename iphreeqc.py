@@ -46,7 +46,7 @@ License Usage Reference
 """
 import ctypes
 import os
-__version__ = "0.1b0"
+__version__ = "0.1"
 
 class iphreeqc():
     def __init__(self, IPhreeqcLib):
