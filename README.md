@@ -2,7 +2,7 @@
 A python 3+ ctypes wrapper for selected function prototypes defined by
 IPhreeqc version 3 in IPhreeqc.h and Var.h.
 
-Version 0.2.1.
+Version 0.2.2.
 
 See "Change Log" below for recent changes.
 
@@ -18,11 +18,11 @@ The author is not affiliated with the USGS or the PHREEQC project.
 
 #### Option 2
 
-    pip install git+https://github.com/stuart-nolan/iphreeqc-py.git@v0.2.1
+    pip install git+https://github.com/stuart-nolan/iphreeqc-py.git@v0.2.2
     
 #### Option 3
 
-    git clone -b 'v0.2.1' --single-branch https://github.com/stuart-nolan/iphreeqc-py.git
+    git clone -b 'v0.2.2' --single-branch https://github.com/stuart-nolan/iphreeqc-py.git
     cd iphreeqc-py; python setup.py install
 
 This python package intentionally does not install or come with an IPhreeqc
@@ -120,6 +120,7 @@ Notable changes from 0.1:
   - add pyproject.toml
   - update setup.py for use with python "build" package
   - update setup.py pypi license classifier (to LGPLv3+)
+  - update iphreeqc.py version string to 0.2.2
   
 See [here](https://github.com/stuart-nolan/iphreeqc-py/commits/master) for
 specifics.
