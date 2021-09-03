@@ -11,7 +11,7 @@ References & Attribution
         Note the files in the examples directory and content used from 
         these files elsewhere in iphreeqc-py are copied from:
     
-        <http://water.usgs.gov/water-resources/software/PHREEQC/phreeqc-3.6.2-15100.tar.gz>
+        <http://water.usgs.gov/water-resources/software/PHREEQC/phreeqc-3.7.1-15876.tar.gz>
     
         and are distributed under the terms of the PHREEQC Public Domain
         declaration (see the "phreeqc-version-3" link above).
@@ -24,29 +24,15 @@ References & Attribution
     IPhreeqcPy, a python wrapper for IPhreeqc
     Copyright 2016 Ravi Patel
 
-This work is derived from IPhreeqcPy.
+    This work is derived from IPhreeqcPy.
 
 License Notice
-    iphreeqc.py Copyright (C) 2020 Stuart Nolan
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as
-    published by the Free Software Foundation, version 3.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-License Usage Reference 
-    <https://www.gnu.org/licenses/gpl-howto.html>
+    SPDX-License-Identifier: LGPL-3.0-or-later
+    Copyright (c) 2020 Stuart Nolan
 """
 import ctypes
 import os
-__version__ = "0.1"
+__version__ = "0.2"
 
 class iphreeqc():
     def __init__(self, IPhreeqcLib):
@@ -1041,7 +1027,7 @@ if __name__ == '__main__':
     install_prefix = os.path.join(os.getenv("HOME"), 'local')
     lib = os.path.join(install_prefix,
                        'lib',
-                       'iphreeqc-3.6.2-15100',
+                       'iphreeqc-3.7.1-15876',
                        'libiphreeqc.so')
     #
     # EDIT 'database' to point to the 'phreeqc.dat' location
@@ -1049,7 +1035,7 @@ if __name__ == '__main__':
     database=os.path.join(install_prefix,
                           'share',
                           'doc',
-                          'iphreeqc-3.6.2-15100',
+                          'iphreeqc-3.7.1-15876',
                           'database',
                           'phreeqc.dat')
 

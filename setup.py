@@ -1,4 +1,6 @@
 import setuptools
+import os, sys
+sys.path.append(os.getcwd())
 import iphreeqc
 
 with open("README.md", "r") as fh:
