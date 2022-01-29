@@ -32,7 +32,7 @@ License Notice
 """
 import ctypes
 import os
-__version__ = "0.3"
+__version__ = "0.3.1"
 
 class iphreeqc():
     def __init__(self, IPhreeqcLib):
