@@ -11,7 +11,7 @@ References & Attribution
         Note the files in the examples directory and content used from 
         these files elsewhere in iphreeqc-py are copied from:
     
-        <http://water.usgs.gov/water-resources/software/PHREEQC/phreeqc-3.7.1-15876.tar.gz>
+        <http://water.usgs.gov/water-resources/software/PHREEQC/phreeqc-3.7.3-15968.tar.gz>
     
         and are distributed under the terms of the PHREEQC Public Domain
         declaration (see the "phreeqc-version-3" link above).
@@ -27,12 +27,12 @@ References & Attribution
     This work is derived from IPhreeqcPy.
 
 License Notice
-    SPDX-License-Identifier: LGPL-3.0-or-later
+    SPDX-License-Identifier: LGPL-3.0-only
     Copyright (c) 2020 Stuart Nolan
 """
 import ctypes
 import os
-__version__ = "0.2.2"
+__version__ = "0.3"
 
 class iphreeqc():
     def __init__(self, IPhreeqcLib):
@@ -1027,7 +1027,7 @@ if __name__ == '__main__':
     install_prefix = os.path.join(os.getenv("HOME"), 'local')
     lib = os.path.join(install_prefix,
                        'lib',
-                       'iphreeqc-3.7.1-15876',
+                       'iphreeqc-3.7.3-15968',
                        'libiphreeqc.so')
     #
     # EDIT 'database' to point to the 'phreeqc.dat' location
@@ -1035,7 +1035,7 @@ if __name__ == '__main__':
     database=os.path.join(install_prefix,
                           'share',
                           'doc',
-                          'iphreeqc-3.7.1-15876',
+                          'iphreeqc-3.7.3-15968',
                           'database',
                           'phreeqc.dat')
 

@@ -3,20 +3,20 @@ test_ex6.py, demo a modified version of examples/ex6
 
 ## USAGE
 Try:
-    python -c "from test_iphreeqc.test_ex6 import ex6; print(ex6(lib=\"${HOME}/local/lib/iphreeqc-3.7.1-15876/libiphreeqc.so\", database=\"${HOME}/local/share/doc/iphreeqc-3.7.1-15876/database/phreeqc.dat\"))"
+    python -c "from test_iphreeqc.test_ex6 import ex6; print(ex6(lib=\"${HOME}/local/lib/iphreeqc-3.7.3-15968/libiphreeqc.so\", database=\"${HOME}/local/share/doc/iphreeqc-3.7.3-15968/database/phreeqc.dat\"))"
 
 ## References & Attribution
     <https://www.usgs.gov/software/phreeqc-version-3>
         Note the files in the examples directory and content used from 
         these files elsewhere in iphreeqc-py are copied from:
     
-        <http://water.usgs.gov/water-resources/software/PHREEQC/phreeqc-3.7.1-15876.tar.gz>
+        <http://water.usgs.gov/water-resources/software/PHREEQC/phreeqc-3.7.3-15968.tar.gz>
     
         and are distributed under the terms of the PHREEQC Public Domain
         declaration (see the "phreeqc-version-3" link above).
 
 ## License Notice
-    SPDX-License-Identifier: LGPL-3.0-or-later
+    SPDX-License-Identifier: LGPL-3.0-only
     Copyright (c) 2020 Stuart Nolan
 """
 import os
@@ -107,7 +107,7 @@ if __name__ == '__main__':
     install_prefix = os.path.join(os.getenv("HOME"), 'local')
     lib = os.path.join(install_prefix,
                        'lib',
-                       'iphreeqc-3.7.1-15876',
+                       'iphreeqc-3.7.3-15968',
                        'libiphreeqc.so')
     #
     # EDIT 'database' to point to the 'phreeqc.dat' location
@@ -115,7 +115,7 @@ if __name__ == '__main__':
     database=os.path.join(install_prefix,
                           'share',
                           'doc',
-                          'iphreeqc-3.7.1-15876',
+                          'iphreeqc-3.7.3-15968',
                           'database',
                           'phreeqc.dat')
 

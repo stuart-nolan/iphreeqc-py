@@ -11,7 +11,7 @@ setuptools.setup(
     author_email="61199416+stuart-nolan@users.noreply.github.com",
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)",
+        "License :: GNU Lesser General Public License v3 (LGPLv3)",
         "Operating System :: POSIX :: Linux",
     ],
     description="python 3+ ctypes wrapper for selected function prototypes defined by IPhreeqc version 3 in IPhreeqc.h and Var.h",
